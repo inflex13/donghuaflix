@@ -207,6 +207,58 @@ class AnimeKhorScraper(BaseScraper):
                 # Episodes
                 episodes = self._parse_episodes(soup)
 
+                # Fetch sources using a single Playwright browser session
+                try:
+                    from playwright.async_api import async_playwright
+                    import base64
+
+                    async with async_playwright() as p:
+                        browser = await p.chromium.launch(headless=True, args=["--no-sandbox"])
+                        page = await browser.new_page()
+
+                        for ep in episodes:
+                            if not ep.external_url:
+                                continue
+                            try:
+                                await page.goto(ep.external_url, wait_until="networkidle", timeout=20000)
+                                await page.wait_for_timeout(1500)
+
+                                options = await page.query_selector_all("select option")
+                                for opt in options:
+                                    name = (await opt.text_content() or "").strip()
+                                    value = await opt.get_attribute("value") or ""
+                                    if not value or "Select" in name:
+                                        continue
+                                    name_lower = name.lower()
+                                    if "ok.ru" not in name_lower and "rumble" not in name_lower:
+                                        continue
+                                    try:
+                                        iframe_html = base64.b64decode(value).decode("utf-8")
+                                        src_match = re.search(r'src="([^"]+)"', iframe_html)
+                                        if not src_match:
+                                            continue
+                                        embed_url = src_match.group(1)
+                                        if embed_url.startswith("//"):
+                                            embed_url = "https:" + embed_url
+                                        source_type = "okru" if "ok.ru" in embed_url else "rumble"
+                                        ep.sources.append(RawSource(
+                                            source_name=name,
+                                            source_key=source_type,
+                                            raw_player_data=embed_url,
+                                            source_type=source_type,
+                                        ))
+                                    except Exception:
+                                        pass
+
+                                if ep.sources:
+                                    logger.info(f"EP{ep.episode_number}: {len(ep.sources)} sources")
+                            except Exception as e:
+                                logger.error(f"Failed EP{ep.episode_number}: {e}")
+
+                        await browser.close()
+                except Exception as e:
+                    logger.error(f"Playwright source extraction failed: {e}")
+
                 return ShowDetail(show=show, episodes=episodes)
 
             except Exception as e:
@@ -240,7 +292,7 @@ class AnimeKhorScraper(BaseScraper):
                     episode_number=ep_num,
                     title=ep_text,
                     external_url=href,
-                    sources=[],  # Sources are resolved per-episode when needed
+                    sources=[],
                 ))
 
             except Exception as e:
@@ -249,7 +301,108 @@ class AnimeKhorScraper(BaseScraper):
 
         return sorted(episodes, key=lambda e: e.episode_number)
 
+    async def scrape_episode_sources(
+        self, client: httpx.AsyncClient, episode_url: str
+    ) -> list[RawSource]:
+        """Use Playwright to extract video server sources from episode page dropdown."""
+        import base64
+
+        sources = []
+        try:
+            from playwright.async_api import async_playwright
+
+            async with async_playwright() as p:
+                browser = await p.chromium.launch(headless=True, args=["--no-sandbox"])
+                page = await browser.new_page()
+                await page.goto(episode_url, wait_until="networkidle", timeout=30000)
+                await page.wait_for_timeout(2000)
+
+                options = await page.query_selector_all("select option")
+                for opt in options:
+                    name = (await opt.text_content() or "").strip()
+                    value = await opt.get_attribute("value") or ""
+                    if not value or "Select" in name:
+                        continue
+
+                    # Only keep ok.ru and RumblePlayer
+                    name_lower = name.lower()
+                    if "ok.ru" not in name_lower and "rumble" not in name_lower:
+                        continue
+
+                    try:
+                        iframe_html = base64.b64decode(value).decode("utf-8")
+                        src_match = re.search(r'src="([^"]+)"', iframe_html)
+                        if not src_match:
+                            continue
+
+                        embed_url = src_match.group(1)
+                        if embed_url.startswith("//"):
+                            embed_url = "https:" + embed_url
+
+                        source_type = "okru" if "ok.ru" in embed_url else "rumble"
+
+                        sources.append(RawSource(
+                            source_name=name,
+                            source_key=source_type,
+                            raw_player_data=embed_url,
+                            source_type=source_type,
+                        ))
+                        logger.info(f"Found {source_type} source: {embed_url[:60]}...")
+
+                    except Exception as e:
+                        logger.error(f"Error decoding server option: {e}")
+
+                await browser.close()
+
+        except Exception as e:
+            logger.error(f"Error scraping episode sources from {episode_url}: {e}")
+
+        return sources
+
     async def extract_video_url(self, raw_player_data: str) -> dict | None:
-        """Extract video URL from AnimeKhor episode page."""
+        """Extract video URL from ok.ru or Rumble embed."""
+        if "ok.ru" in raw_player_data:
+            return await self._resolve_okru(raw_player_data)
+        if "rumble.com" in raw_player_data:
+            return await self._resolve_rumble(raw_player_data)
         from app.services.source_resolver import _resolve_embed
         return await _resolve_embed(raw_player_data)
+
+    async def _resolve_okru(self, embed_url: str) -> dict | None:
+        """Resolve ok.ru embed to direct video URL."""
+        try:
+            import httpx as hx
+            async with hx.AsyncClient(timeout=15, follow_redirects=True) as client:
+                resp = await client.get(embed_url, headers={"User-Agent": "Mozilla/5.0"})
+                if resp.status_code == 200:
+                    # ok.ru embeds contain video URLs in data attributes or JSON
+                    match = re.search(r'"hlsManifestUrl":"([^"]+)"', resp.text)
+                    if match:
+                        hls_url = match.group(1).replace("\\\\u0026", "&").replace("\\/", "/")
+                        return {"url": hls_url, "type": "hls"}
+                    # Try finding direct MP4
+                    match = re.search(r'"videoUrl":"([^"]+)"', resp.text)
+                    if match:
+                        return {"url": match.group(1).replace("\\/", "/"), "type": "mp4"}
+        except Exception as e:
+            logger.error(f"ok.ru resolve failed: {e}")
+        return None
+
+    async def _resolve_rumble(self, embed_url: str) -> dict | None:
+        """Resolve Rumble embed to direct video URL."""
+        try:
+            import httpx as hx
+            async with hx.AsyncClient(timeout=15, follow_redirects=True) as client:
+                resp = await client.get(embed_url, headers={"User-Agent": "Mozilla/5.0"})
+                if resp.status_code == 200:
+                    # Rumble embeds have mp4 URLs in JSON
+                    match = re.search(r'"mp4":.*?"url":"([^"]+)"', resp.text)
+                    if match:
+                        return {"url": match.group(1), "type": "mp4"}
+                    # Try HLS
+                    match = re.search(r'"hls":.*?"url":"([^"]+)"', resp.text)
+                    if match:
+                        return {"url": match.group(1), "type": "hls"}
+        except Exception as e:
+            logger.error(f"Rumble resolve failed: {e}")
+        return None

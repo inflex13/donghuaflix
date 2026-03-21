@@ -25,12 +25,72 @@ async def resolve_video_url(source: Source) -> dict | None:
         embed_url = f"https://play.donghuafun.com/embed/{raw_data}"
         return await _resolve_embed(embed_url)
 
+    # ok.ru sources
+    if source_name and "ok.ru" in source_name.lower() or source.source_type == "okru":
+        if "ok.ru" in raw_data:
+            return await _resolve_okru(raw_data)
+
+    # Rumble sources
+    if source_name and "rumble" in source_name.lower() or source.source_type == "rumble":
+        if "rumble.com" in raw_data:
+            return await _resolve_rumble(raw_data)
+
     # Full URL
     if raw_data.startswith("http"):
         if "dailymotion" in raw_data:
             return await _resolve_dailymotion(raw_data)
+        if "ok.ru" in raw_data:
+            return await _resolve_okru(raw_data)
+        if "rumble.com" in raw_data:
+            return await _resolve_rumble(raw_data)
         return await _resolve_embed(raw_data)
 
+    return None
+
+
+async def _resolve_okru(embed_url: str) -> dict | None:
+    """Resolve ok.ru embed to direct video URL."""
+    try:
+        import httpx
+        async with httpx.AsyncClient(timeout=15, follow_redirects=True) as client:
+            resp = await client.get(embed_url, headers={"User-Agent": "Mozilla/5.0"})
+            if resp.status_code == 200:
+                match = re.search(r'hlsManifestUrl["\s:]+(["\'])(.+?)\1', resp.text)
+                if match:
+                    hls_url = match.group(2).replace("\\u0026", "&").replace("\\/", "/")
+                    logger.info(f"Resolved ok.ru → HLS")
+                    return {"url": hls_url, "type": "hls"}
+                match = re.search(r'data-options="[^"]*hlsMasterPlaylistUrl[^"]*?([hH]ttps?://[^"&]+\.m3u8[^"&]*)', resp.text)
+                if match:
+                    return {"url": match.group(1).replace("&amp;", "&"), "type": "hls"}
+    except Exception as e:
+        logger.error(f"ok.ru resolve failed: {e}")
+    return None
+
+
+async def _resolve_rumble(embed_url: str) -> dict | None:
+    """Resolve Rumble embed to direct video URL."""
+    try:
+        import httpx
+        async with httpx.AsyncClient(timeout=15, follow_redirects=True) as client:
+            resp = await client.get(embed_url, headers={"User-Agent": "Mozilla/5.0"})
+            if resp.status_code == 200:
+                urls = re.findall(r'"url":"([^"]+)"', resp.text)
+                urls = [u.replace("\\/", "/") for u in urls]
+
+                # Prefer HLS playlist from rumble.com
+                for u in urls:
+                    if "rumble.com/hls" in u and "playlist.m3u8" in u:
+                        logger.info(f"Resolved Rumble → HLS: {u[:60]}...")
+                        return {"url": u, "type": "hls"}
+
+                # Fallback to MP4
+                for u in urls:
+                    if u.endswith(".mp4"):
+                        logger.info(f"Resolved Rumble → MP4: {u[:60]}...")
+                        return {"url": u, "type": "mp4"}
+    except Exception as e:
+        logger.error(f"Rumble resolve failed: {e}")
     return None
 
 
