@@ -38,8 +38,16 @@ fun ShowCard(
             .height(if (isFocused) 237.dp else 225.dp)
             .clip(RoundedCornerShape(10.dp))
             .border(
-                width = if (isFocused) 3.dp else 0.dp,
-                color = if (isFocused) AccentFuchsia else Color.Transparent,
+                width = when {
+                    isFocused -> 3.dp
+                    isInWatchlist -> 1.5.dp
+                    else -> 0.dp
+                },
+                brush = when {
+                    isFocused -> Brush.linearGradient(listOf(AccentFuchsia, AccentFuchsia))
+                    isInWatchlist -> Brush.linearGradient(listOf(AccentPurple.copy(alpha = 0.6f), AccentFuchsia.copy(alpha = 0.4f)))
+                    else -> Brush.linearGradient(listOf(Color.Transparent, Color.Transparent))
+                },
                 shape = RoundedCornerShape(10.dp),
             )
             .background(SurfaceCard)
@@ -102,23 +110,6 @@ fun ShowCard(
                     fontSize = 9.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = AccentGold,
-                )
-            }
-        }
-
-        // Watchlist indicator
-        if (isInWatchlist) {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .padding(top = if (show.rating != null) 28.dp else 6.dp, start = 6.dp)
-                    .background(AccentPurple.copy(alpha = 0.8f), RoundedCornerShape(4.dp))
-                    .padding(horizontal = 5.dp, vertical = 1.dp),
-            ) {
-                Text(
-                    text = "♥",
-                    fontSize = 10.sp,
-                    color = Color.White,
                 )
             }
         }
