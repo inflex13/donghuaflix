@@ -70,6 +70,28 @@ class WatchRepository @Inject constructor(
         }
     }
 
+    suspend fun markAsWatched(showId: Int, episodeNumber: Int) {
+        val existing = watchHistoryDao.getProgressForEpisode(showId, episodeNumber)
+        val entity = WatchHistoryEntity(
+            id = existing?.id ?: 0,
+            showId = showId,
+            episodeNumber = episodeNumber,
+            progressSeconds = existing?.durationSeconds ?: 1,
+            durationSeconds = existing?.durationSeconds ?: 1,
+            completed = true,
+            watchedAt = System.currentTimeMillis(),
+            isSynced = false,
+        )
+        watchHistoryDao.upsert(entity)
+    }
+
+    suspend fun markAsUnwatched(showId: Int, episodeNumber: Int) {
+        val existing = watchHistoryDao.getProgressForEpisode(showId, episodeNumber)
+        if (existing != null) {
+            watchHistoryDao.upsert(existing.copy(completed = false, progressSeconds = 0, isSynced = false))
+        }
+    }
+
     suspend fun getProgressForEpisode(showId: Int, episodeNumber: Int): WatchProgress? {
         val entity = watchHistoryDao.getProgressForEpisode(showId, episodeNumber) ?: return null
         return WatchProgress(entity.showId, entity.episodeNumber, entity.progressSeconds, entity.durationSeconds, entity.completed)

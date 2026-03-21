@@ -2,7 +2,9 @@ package com.donghuaflix.ui.detail
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -356,6 +358,38 @@ fun DetailScreen(
                                 fontSize = 14.sp,
                                 color = TextMuted,
                             )
+                        }
+
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        // Mark Watched Up To button
+                        if (uiState.episodes.isNotEmpty()) {
+                            var mwFocused by remember { mutableStateOf(false) }
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(6.dp))
+                                    .border(
+                                        if (mwFocused) 2.dp else 0.dp,
+                                        if (mwFocused) AccentFuchsia else Color.Transparent,
+                                        RoundedCornerShape(6.dp),
+                                    )
+                                    .background(if (mwFocused) AccentFuchsia.copy(alpha = 0.15f) else SurfaceCard)
+                                    .onFocusChanged { mwFocused = it.isFocused }
+                                    .clickable {
+                                        // Mark all episodes as watched
+                                        val lastEp = uiState.episodes.maxByOrNull { it.episodeNumber }
+                                        if (lastEp != null) {
+                                            viewModel.markAllWatchedUpTo(lastEp.episodeNumber)
+                                        }
+                                    }
+                                    .padding(horizontal = 12.dp, vertical = 6.dp),
+                            ) {
+                                androidx.compose.material3.Text(
+                                    "Mark All Watched",
+                                    fontSize = 11.sp,
+                                    color = if (mwFocused) AccentFuchsia else TextMuted,
+                                )
+                            }
                         }
                     }
                 }

@@ -127,6 +127,30 @@ class DetailViewModel @Inject constructor(
         }
     }
 
+    fun markEpisodeWatched(episodeNumber: Int) {
+        viewModelScope.launch {
+            watchRepository.markAsWatched(showId, episodeNumber)
+            refreshWatchHistory()
+        }
+    }
+
+    fun markEpisodeUnwatched(episodeNumber: Int) {
+        viewModelScope.launch {
+            watchRepository.markAsUnwatched(showId, episodeNumber)
+            refreshWatchHistory()
+        }
+    }
+
+    fun markAllWatchedUpTo(episodeNumber: Int) {
+        viewModelScope.launch {
+            val episodes = _uiState.value.episodes.filter { it.episodeNumber <= episodeNumber }
+            for (ep in episodes) {
+                watchRepository.markAsWatched(showId, ep.episodeNumber)
+            }
+            refreshWatchHistory()
+        }
+    }
+
     fun toggleWatchlist() {
         viewModelScope.launch {
             watchRepository.toggleWatchlist(showId)
