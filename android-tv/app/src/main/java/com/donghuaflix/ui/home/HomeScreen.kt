@@ -118,42 +118,48 @@ fun HomeScreen(
             .background(Obsidian),
     ) {
         if (uiState.isLoading) {
-            // Splash screen
-            Box(modifier = Modifier.fillMaxSize()) {
+            // Splash screen — fullscreen landscape art with branding
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                // Fullscreen splash art
                 androidx.compose.foundation.Image(
                     painter = androidx.compose.ui.res.painterResource(com.donghuaflix.R.drawable.splash_bg),
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop,
                 )
+
+                // Dark overlay for text readability
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color.Black.copy(alpha = 0.3f)),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        androidx.compose.material3.Text(
-                            text = "D+F",
-                            fontSize = 52.sp,
-                            fontWeight = FontWeight.Black,
-                            color = AccentFuchsia,
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        androidx.compose.material3.Text(
-                            text = "DONGHUA FLIX",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            letterSpacing = 4.sp,
-                        )
-                        Spacer(modifier = Modifier.height(20.dp))
-                        androidx.compose.material3.Text(
-                            text = "Loading your library...",
-                            fontSize = 13.sp,
-                            color = TextMuted,
-                        )
-                    }
+                        .background(Color.Black.copy(alpha = 0.35f)),
+                )
+
+                // Branding overlay
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    androidx.compose.material3.Text(
+                        text = "D+F",
+                        fontSize = 56.sp,
+                        fontWeight = FontWeight.Black,
+                        color = AccentFuchsia,
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    androidx.compose.material3.Text(
+                        text = "DONGHUA FLIX",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        letterSpacing = 6.sp,
+                    )
+                    Spacer(modifier = Modifier.height(24.dp))
+                    androidx.compose.material3.Text(
+                        text = "Loading your library...",
+                        fontSize = 14.sp,
+                        color = TextMuted,
+                    )
                 }
             }
         } else {
