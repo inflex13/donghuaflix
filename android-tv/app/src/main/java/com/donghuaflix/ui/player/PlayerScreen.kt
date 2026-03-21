@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalContext
@@ -231,13 +233,47 @@ fun PlayerScreen(
             }
         }
 
-        // Error state
+        // Error state — show error + available sources to try
         if (uiState.error != null) {
             Box(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.8f)),
                 contentAlignment = Alignment.Center,
             ) {
-                Text(uiState.error!!, color = SecondaryColor, fontSize = 16.sp)
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(uiState.error!!, color = SecondaryColor, fontSize = 16.sp)
+                    if (uiState.sources.size > 1) {
+                        Spacer(modifier = Modifier.height(20.dp))
+                        Text("Try a different source:", color = TextSecondary, fontSize = 13.sp)
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            uiState.sources.forEach { source ->
+                                var srcFocused by remember { mutableStateOf(false) }
+                                val isSelected = source.id == uiState.selectedSource?.id
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .border(
+                                            if (srcFocused) 3.dp else if (isSelected) 1.dp else 0.dp,
+                                            if (srcFocused) AccentFuchsia else if (isSelected) AccentPurple else Color.Transparent,
+                                            RoundedCornerShape(8.dp),
+                                        )
+                                        .background(if (srcFocused) AccentFuchsia.copy(alpha = 0.2f) else SurfaceCard)
+                                        .onFocusChanged { srcFocused = it.isFocused }
+                                        .clickable { viewModel.selectSource(source) }
+                                        .padding(horizontal = 16.dp, vertical = 10.dp),
+                                ) {
+                                    Text(
+                                        source.sourceName,
+                                        fontSize = 13.sp,
+                                        color = if (srcFocused) AccentFuchsia else if (isSelected) AccentPurple else TextSecondary,
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -326,6 +362,14 @@ fun PlayerScreen(
                         ControlPill(
                             text = if (player.isPlaying) "❚❚  Pause" else "▶  Play",
                             isFocused = uiState.focusedControl == PlayerControl.PLAY_PAUSE,
+                            isActive = true,
+                        )
+
+                        // Source indicator / switcher
+                        val currentSource = uiState.selectedSource?.sourceName ?: "Source"
+                        ControlPill(
+                            text = "⟲  $currentSource",
+                            isFocused = uiState.focusedControl == PlayerControl.SOURCE,
                             isActive = true,
                         )
 

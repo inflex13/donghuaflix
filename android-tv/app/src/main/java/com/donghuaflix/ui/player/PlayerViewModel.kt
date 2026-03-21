@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-enum class PlayerControl { SEEK_BAR, PLAY_PAUSE, PREV_EP, NEXT_EP, AUTOPLAY }
+enum class PlayerControl { SEEK_BAR, PLAY_PAUSE, SOURCE, PREV_EP, NEXT_EP, AUTOPLAY }
 
 data class PlayerUiState(
     val showTitle: String = "",
@@ -224,16 +224,26 @@ class PlayerViewModel @Inject constructor(
         return when (_uiState.value.focusedControl) {
             PlayerControl.SEEK_BAR -> false // seek handled by left/right D-pad
             PlayerControl.PLAY_PAUSE -> false // handled by caller (needs player reference)
+            PlayerControl.SOURCE -> { cycleSource(); true }
             PlayerControl.PREV_EP -> { previousEpisode(); true }
             PlayerControl.NEXT_EP -> { nextEpisode(); true }
             PlayerControl.AUTOPLAY -> { toggleAutoPlay(); true }
         }
     }
 
+    fun cycleSource() {
+        val sources = _uiState.value.sources
+        if (sources.size <= 1) return
+        val currentIdx = sources.indexOf(_uiState.value.selectedSource)
+        val nextIdx = (currentIdx + 1) % sources.size
+        selectSource(sources[nextIdx])
+    }
+
     fun isFocusedOnSeekBar(): Boolean = _uiState.value.focusedControl == PlayerControl.SEEK_BAR
 
     private fun getAvailableControls(): List<PlayerControl> {
         val controls = mutableListOf(PlayerControl.SEEK_BAR, PlayerControl.PLAY_PAUSE)
+        controls.add(PlayerControl.SOURCE)
         if (_uiState.value.hasPrevEpisode) controls.add(PlayerControl.PREV_EP)
         if (_uiState.value.hasNextEpisode) controls.add(PlayerControl.NEXT_EP)
         controls.add(PlayerControl.AUTOPLAY)
