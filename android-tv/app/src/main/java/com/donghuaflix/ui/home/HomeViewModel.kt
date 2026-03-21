@@ -101,11 +101,18 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 appUpdater.checkForUpdate()
-                if (appUpdater.updateState.value.available) {
-                    appUpdater.downloadAndInstall()
-                }
             } catch (_: Exception) {}
         }
+    }
+
+    fun triggerUpdate() {
+        try {
+            appUpdater.downloadAndInstall()
+        } catch (_: Exception) {}
+    }
+
+    fun dismissUpdateMessage() {
+        appUpdater.dismissUpdate()
     }
 
     fun refresh() {

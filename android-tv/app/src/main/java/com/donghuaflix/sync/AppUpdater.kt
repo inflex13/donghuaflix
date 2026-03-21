@@ -26,6 +26,8 @@ data class UpdateInfo(
     val downloadUrl: String = "",
     val isDownloading: Boolean = false,
     val downloadProgress: Int = 0,
+    val checked: Boolean = false,
+    val message: String? = null,
 )
 
 @Singleton
@@ -44,13 +46,25 @@ class AppUpdater @Inject constructor(
             if (latest.versionCode > currentVersionCode) {
                 _updateState.value = UpdateInfo(
                     available = true,
+                    checked = true,
                     versionName = latest.versionName,
                     changelog = latest.changelog,
                     downloadUrl = latest.downloadUrl,
+                    message = "Update v${latest.versionName} available!",
+                )
+            } else {
+                _updateState.value = UpdateInfo(
+                    available = false,
+                    checked = true,
+                    versionName = "v${BuildConfig.VERSION_NAME}",
+                    message = "You're up to date (v${BuildConfig.VERSION_NAME})",
                 )
             }
         } catch (_: Exception) {
-            // Silently fail — update check is non-critical
+            _updateState.value = UpdateInfo(
+                checked = true,
+                message = "Couldn't check for updates",
+            )
         }
     }
 
