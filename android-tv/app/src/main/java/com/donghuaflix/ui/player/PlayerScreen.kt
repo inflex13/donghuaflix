@@ -366,9 +366,15 @@ fun PlayerScreen(
                         )
 
                         // Source indicator / switcher
-                        val currentSource = uiState.selectedSource?.sourceName ?: "Source"
+                        val rawName = uiState.selectedSource?.sourceName ?: "Source"
+                        val shortName = when {
+                            "ok.ru" in rawName.lowercase() -> "RU"
+                            "rumble" in rawName.lowercase() -> "Rumble"
+                            "dailymotion" in rawName.lowercase() -> "4K"
+                            else -> rawName.take(10)
+                        }
                         ControlPill(
-                            text = "⟲  $currentSource",
+                            text = "⟲  $shortName",
                             isFocused = uiState.focusedControl == PlayerControl.SOURCE,
                             isActive = true,
                         )

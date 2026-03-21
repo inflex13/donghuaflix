@@ -74,6 +74,7 @@ class PlayerViewModel @Inject constructor(
             // Load episodes
             val episodes = showRepository.getEpisodes(showId, website)
             _uiState.update { it.copy(episodes = episodes) }
+            updateHasNext()
 
             // Find current episode
             val currentEp = episodes.find { it.episodeNumber == _uiState.value.episodeNumber }
