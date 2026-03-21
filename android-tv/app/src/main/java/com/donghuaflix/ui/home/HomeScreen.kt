@@ -176,6 +176,7 @@ fun HomeScreen(
                     .clip(RoundedCornerShape(16.dp))
                     .background(SurfaceCard)
                     .border(1.dp, AccentPurple.copy(alpha = 0.3f), RoundedCornerShape(16.dp))
+                    .clickable { /* stop propagation to background */ }
                     .padding(32.dp),
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
