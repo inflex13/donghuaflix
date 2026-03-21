@@ -20,6 +20,14 @@ class SyncRepository @Inject constructor(
     private val watchlistDao: WatchlistDao,
     private val syncMetadataDao: SyncMetadataDao,
 ) {
+    suspend fun fullResync(): Result<Unit> = runCatching {
+        // Wipe local show cache but keep watch history
+        showDao.deleteAll()
+        syncMetadataDao.deleteAll()
+        // Now do a full sync
+        syncAll().getOrThrow()
+    }
+
     suspend fun syncAll(): Result<Unit> = runCatching {
         val lastSynced = syncMetadataDao.getValue("last_synced_at")
 

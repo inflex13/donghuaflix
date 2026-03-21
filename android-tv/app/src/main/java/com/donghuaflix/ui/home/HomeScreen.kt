@@ -196,6 +196,7 @@ fun HomeScreen(
                         onBrowseClick = { onBrowseClick(null) },
                         onSearchClick = onSearchClick,
                         onWatchlistClick = onWatchlistClick,
+                        onSyncClick = { viewModel.fullResync() },
                         onUpdateClick = { viewModel.checkForUpdate() },
                     )
                 }
@@ -259,6 +260,7 @@ private fun TopNavBar(
     onBrowseClick: () -> Unit,
     onSearchClick: () -> Unit,
     onWatchlistClick: () -> Unit,
+    onSyncClick: () -> Unit,
     onUpdateClick: () -> Unit,
 ) {
     Row(
@@ -289,6 +291,8 @@ private fun TopNavBar(
         NavPill("Search", onClick = onSearchClick)
         Spacer(modifier = Modifier.width(8.dp))
         NavPill("My List", onClick = onWatchlistClick)
+        Spacer(modifier = Modifier.width(8.dp))
+        NavPill("Sync", onClick = onSyncClick)
         Spacer(modifier = Modifier.width(8.dp))
         NavPill("Update", onClick = onUpdateClick)
     }

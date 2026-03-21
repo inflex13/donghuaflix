@@ -121,4 +121,16 @@ class HomeViewModel @Inject constructor(
             loadHome()
         }
     }
+
+    fun fullResync() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+            try {
+                syncRepository.fullResync()
+                loadHome()
+            } catch (_: Exception) {
+                loadHome()
+            }
+        }
+    }
 }
