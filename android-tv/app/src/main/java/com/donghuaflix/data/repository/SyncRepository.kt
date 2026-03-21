@@ -21,10 +21,11 @@ class SyncRepository @Inject constructor(
     private val syncMetadataDao: SyncMetadataDao,
 ) {
     suspend fun fullResync(): Result<Unit> = runCatching {
-        // Wipe local show cache but keep watch history
+        // Wipe everything local and re-sync from server
         showDao.deleteAll()
+        watchHistoryDao.deleteAll()
         syncMetadataDao.deleteAll()
-        // Now do a full sync
+        // Now do a full sync (pulls shows + watch history from server)
         syncAll().getOrThrow()
     }
 
