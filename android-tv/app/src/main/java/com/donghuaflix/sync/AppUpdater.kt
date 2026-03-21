@@ -74,18 +74,20 @@ class AppUpdater @Inject constructor(
         val url = _updateState.value.downloadUrl
         if (url.isBlank()) return
 
-        // Open download URL in browser — triggers native download + install
+        // Clear state first so modal doesn't reappear
+        _updateState.value = UpdateInfo()
+
+        // Open download URL in browser
         try {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
             context.startActivity(intent)
-            _updateState.value = _updateState.value.copy(
-                message = "Opening browser to download...",
-            )
         } catch (_: Exception) {
-            _updateState.value = _updateState.value.copy(
-                message = "Couldn't open browser. Go to dl.donghuaflix.cloud manually.",
+            // If browser fails, show message briefly
+            _updateState.value = UpdateInfo(
+                checked = true,
+                message = "Go to dl.donghuaflix.cloud manually",
             )
         }
     }
