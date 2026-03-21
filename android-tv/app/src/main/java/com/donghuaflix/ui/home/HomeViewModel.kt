@@ -58,10 +58,20 @@ class HomeViewModel @Inject constructor(
         try {
             val sections = mutableListOf<HomeSection>()
 
-            // Recently Added
-            val recent = showRepository.getRecentShows(20)
-            if (recent.isNotEmpty()) {
-                sections.add(HomeSection("Recently Added", recent, "recently_added"))
+            // Recently Added — per website
+            val recent = showRepository.getRecentShows(100)
+            val donghuafunShows = recent.filter { show ->
+                show.websites.any { it.name == "donghuafun" }
+            }.take(20)
+            val animekhorShows = recent.filter { show ->
+                show.websites.any { it.name == "animekhor" }
+            }.take(20)
+
+            if (donghuafunShows.isNotEmpty()) {
+                sections.add(HomeSection("DonghuaFun", donghuafunShows, "donghuafun"))
+            }
+            if (animekhorShows.isNotEmpty()) {
+                sections.add(HomeSection("AnimeKhor", animekhorShows, "animekhor"))
             }
 
             // By Genre
