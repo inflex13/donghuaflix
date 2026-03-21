@@ -74,69 +74,20 @@ class AppUpdater @Inject constructor(
         val url = _updateState.value.downloadUrl
         if (url.isBlank()) return
 
-        _updateState.value = _updateState.value.copy(isDownloading = true)
-
-        val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-        val request = DownloadManager.Request(Uri.parse(url))
-            .setTitle("DonghuaFlix Update")
-            .setDescription("Downloading v${_updateState.value.versionName}")
-            .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "DonghuaFlix-update.apk")
-            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-
-        val downloadId = downloadManager.enqueue(request)
-
-        // Register receiver to install after download
-        val receiver = object : BroadcastReceiver() {
-            override fun onReceive(ctx: Context, intent: Intent) {
-                val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
-                if (id == downloadId) {
-                    _updateState.value = _updateState.value.copy(isDownloading = false)
-                    installApk()
-                    try { context.unregisterReceiver(this) } catch (_: Exception) {}
-                }
+        // Open download URL in browser — triggers native download + install
+        try {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            context.registerReceiver(
-                receiver,
-                IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),
-                Context.RECEIVER_EXPORTED,
+            context.startActivity(intent)
+            _updateState.value = _updateState.value.copy(
+                message = "Opening browser to download...",
             )
-        } else {
-            context.registerReceiver(
-                receiver,
-                IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),
+        } catch (_: Exception) {
+            _updateState.value = _updateState.value.copy(
+                message = "Couldn't open browser. Go to dl.donghuaflix.cloud manually.",
             )
         }
-    }
-
-    private fun installApk() {
-        val file = File(
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-            "DonghuaFlix-update.apk",
-        )
-        if (!file.exists()) return
-
-        val intent = Intent(Intent.ACTION_VIEW).apply {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
-                setDataAndType(uri, "application/vnd.android.package-archive")
-                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            } else {
-                setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive")
-            }
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-        context.startActivity(intent)
-
-        // Delete APK after a short delay to free TV storage
-        Thread {
-            Thread.sleep(30_000) // Wait 30s for install to complete
-            if (file.exists()) {
-                file.delete()
-            }
-        }.start()
     }
 
     /** Clean up any leftover APK files from previous updates */

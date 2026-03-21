@@ -107,6 +107,7 @@ class HomeViewModel @Inject constructor(
 
     fun triggerUpdate() {
         try {
+            appUpdater.dismissUpdate()
             appUpdater.downloadAndInstall()
         } catch (_: Exception) {}
     }
