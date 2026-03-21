@@ -24,6 +24,7 @@ services:
         condition: service_started
     environment:
       - DATABASE_URL=postgresql+asyncpg://postgres:donghuaflix2026@db:5432/donghuaflix
+      - SYNC_DATABASE_URL=postgresql://postgres:donghuaflix2026@db:5432/donghuaflix
       - REDIS_URL=redis://redis:6379/0
       - PYTHONPATH=/app
     volumes:
