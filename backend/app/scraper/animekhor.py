@@ -78,7 +78,7 @@ class AnimeKhorScraper(BaseScraper):
                     continue
                 slug = slug_match.group(1).rstrip("/")
 
-                title_tag = article.select_one(".tt, h2, .title")
+                title_tag = article.select_one("h2")
                 title = title_tag.get_text(strip=True) if title_tag else ""
                 if not title:
                     continue
