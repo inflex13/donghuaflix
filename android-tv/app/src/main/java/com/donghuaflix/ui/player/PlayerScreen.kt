@@ -281,49 +281,40 @@ fun PlayerScreen(
                         .padding(24.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
-                    // Seek bar area — highlighted when focused
+                    // Seek bar
                     val seekFocused = uiState.focusedControl == PlayerControl.SEEK_BAR
                     val progress = if (player.duration > 0) {
                         player.currentPosition.toFloat() / player.duration
                     } else 0f
 
-                    Column(
+                    // Progress bar — only this gets the border
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(RoundedCornerShape(6.dp))
+                            .height(if (seekFocused) 8.dp else 4.dp)
+                            .clip(RoundedCornerShape(4.dp))
                             .then(
-                                if (seekFocused) Modifier.border(2.dp, AccentFuchsia, RoundedCornerShape(6.dp))
+                                if (seekFocused) Modifier.border(2.dp, AccentFuchsia, RoundedCornerShape(4.dp))
                                 else Modifier
                             )
-                            .background(if (seekFocused) AccentFuchsia.copy(alpha = 0.1f) else Color.Transparent)
-                            .padding(horizontal = 8.dp, vertical = 6.dp),
+                            .background(Color.Gray.copy(alpha = 0.4f)),
                     ) {
-                        // Progress bar
                         Box(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .height(if (seekFocused) 6.dp else 4.dp)
-                                .background(Color.Gray.copy(alpha = 0.5f), RoundedCornerShape(3.dp)),
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxHeight()
-                                    .fillMaxWidth(progress)
-                                    .background(AccentFuchsia, RoundedCornerShape(3.dp)),
-                            )
-                        }
+                                .fillMaxHeight()
+                                .fillMaxWidth(progress)
+                                .background(if (seekFocused) AccentFuchsia else AccentPurple, RoundedCornerShape(4.dp)),
+                        )
+                    }
 
-                        Spacer(modifier = Modifier.height(4.dp))
-
-                        // Time display
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                        ) {
-                            Text(formatTime(player.currentPosition), color = if (seekFocused) AccentFuchsia else Color.White, fontSize = 12.sp)
-                            if (seekFocused) Text("◀▶ Seek", color = AccentFuchsia, fontSize = 10.sp)
-                            Text(formatTime(player.duration), color = TextMuted, fontSize = 12.sp)
-                        }
+                    // Time display
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        Text(formatTime(player.currentPosition), color = Color.White, fontSize = 12.sp)
+                        if (seekFocused) Text("◀ ▶  Seek", color = AccentFuchsia, fontSize = 11.sp)
+                        Text(formatTime(player.duration), color = TextMuted, fontSize = 12.sp)
                     }
 
                     // Control pills row
