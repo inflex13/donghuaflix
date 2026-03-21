@@ -134,6 +134,7 @@ fun HomeScreen(
                                     onClick = { onShowClick(show.id, progress.episodeNumber) },
                                     showProgress = fraction,
                                     episodeLabel = "EP ${progress.episodeNumber}",
+                                    isInWatchlist = show.id in uiState.watchlistIds,
                                 )
                             }
                         }
@@ -153,6 +154,7 @@ fun HomeScreen(
                             ShowCard(
                                 show = show,
                                 onClick = { onShowClick(show.id, null) },
+                                isInWatchlist = show.id in uiState.watchlistIds,
                             )
                         }
                     }

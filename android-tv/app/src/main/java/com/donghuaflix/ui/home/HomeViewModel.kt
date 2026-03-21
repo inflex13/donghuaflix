@@ -24,6 +24,7 @@ data class HomeUiState(
     val isLoading: Boolean = true,
     val sections: List<HomeSection> = emptyList(),
     val continueWatching: List<Pair<Show, WatchProgress>> = emptyList(),
+    val watchlistIds: Set<Int> = emptySet(),
     val error: String? = null,
 )
 
@@ -50,6 +51,15 @@ class HomeViewModel @Inject constructor(
             // Image preloading disabled — Coil's lazy loading + disk cache handles this
         }
         observeContinueWatching()
+        observeWatchlist()
+    }
+
+    private fun observeWatchlist() {
+        viewModelScope.launch {
+            watchRepository.observeWatchlist().collect { ids ->
+                _uiState.update { it.copy(watchlistIds = ids.toSet()) }
+            }
+        }
     }
 
     private suspend fun loadHome() {
