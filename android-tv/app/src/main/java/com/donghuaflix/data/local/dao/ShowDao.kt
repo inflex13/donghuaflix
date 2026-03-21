@@ -13,7 +13,7 @@ interface ShowDao {
     @Query("SELECT * FROM shows ORDER BY updatedAt DESC")
     fun getAllShows(): Flow<List<ShowEntity>>
 
-    @Query("SELECT * FROM shows ORDER BY updatedAt DESC LIMIT :limit OFFSET :offset")
+    @Query("SELECT * FROM shows ORDER BY remoteUpdatedAt DESC, updatedAt DESC LIMIT :limit OFFSET :offset")
     suspend fun getShowsPaged(limit: Int, offset: Int): List<ShowEntity>
 
     @Query("SELECT * FROM shows WHERE id = :id")
@@ -28,13 +28,13 @@ interface ShowDao {
     @Query("SELECT * FROM shows WHERE genres LIKE '%' || :genre || '%' ORDER BY rating DESC")
     suspend fun getShowsByGenre(genre: String): List<ShowEntity>
 
-    @Query("SELECT * FROM shows WHERE status = :status ORDER BY updatedAt DESC")
+    @Query("SELECT * FROM shows WHERE status = :status ORDER BY remoteUpdatedAt DESC")
     suspend fun getShowsByStatus(status: String): List<ShowEntity>
 
-    @Query("SELECT * FROM shows WHERE category = :category ORDER BY updatedAt DESC")
+    @Query("SELECT * FROM shows WHERE category = :category ORDER BY remoteUpdatedAt DESC")
     suspend fun getShowsByCategory(category: String): List<ShowEntity>
 
-    @Query("SELECT * FROM shows ORDER BY updatedAt DESC LIMIT :limit")
+    @Query("SELECT * FROM shows ORDER BY remoteUpdatedAt DESC, updatedAt DESC LIMIT :limit")
     suspend fun getRecentShows(limit: Int = 20): List<ShowEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

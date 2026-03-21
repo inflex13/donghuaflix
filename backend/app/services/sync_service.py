@@ -46,6 +46,15 @@ def sync_show_to_db(
             show.total_episodes = raw_show.total_episodes
         if raw_show.status:
             show.status = raw_show.status
+        # Update remote timestamp if newer
+        if raw_show.remote_updated_at:
+            from datetime import datetime as dt
+            try:
+                remote_ts = dt.fromisoformat(raw_show.remote_updated_at) if isinstance(raw_show.remote_updated_at, str) else raw_show.remote_updated_at
+                if not show.remote_updated_at or remote_ts > show.remote_updated_at:
+                    show.remote_updated_at = remote_ts
+            except (ValueError, TypeError):
+                pass
     else:
         show = Show(
             title=raw_show.title,
@@ -63,6 +72,7 @@ def sync_show_to_db(
             language=raw_show.language,
             total_episodes=raw_show.total_episodes,
             category=raw_show.category,
+            remote_updated_at=raw_show.remote_updated_at if not isinstance(raw_show.remote_updated_at, str) else None,
         )
         db.add(show)
         db.flush()

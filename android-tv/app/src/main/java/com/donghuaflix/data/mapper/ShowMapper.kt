@@ -12,6 +12,17 @@ import com.google.gson.reflect.TypeToken
 
 object ShowMapper {
 
+    private fun parseTimestamp(ts: String?): Long {
+        if (ts == null) return 0
+        return try {
+            java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.US).parse(ts)?.time ?: 0
+        } catch (_: Exception) {
+            try {
+                java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.US).parse(ts)?.time ?: 0
+            } catch (_: Exception) { 0 }
+        }
+    }
+
     private val gson = Gson()
 
     fun dtoToEntity(dto: ShowDto): ShowEntity = ShowEntity(
@@ -28,6 +39,7 @@ object ShowMapper {
         totalEpisodes = dto.totalEpisodes,
         category = dto.category,
         websitesJson = dto.websites?.let { gson.toJson(it) },
+        remoteUpdatedAt = parseTimestamp(dto.remoteUpdatedAt),
         updatedAt = System.currentTimeMillis(),
     )
 

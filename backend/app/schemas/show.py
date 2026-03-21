@@ -31,6 +31,7 @@ class ShowResponse(ShowBase):
     slug: str | None = None
     created_at: datetime
     updated_at: datetime
+    remote_updated_at: datetime | None = None
     websites: list[WebsiteInfo] = []
 
     class Config:

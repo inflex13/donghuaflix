@@ -18,5 +18,6 @@ data class ShowEntity(
     val totalEpisodes: Int? = null,
     val category: String? = null,
     val websitesJson: String? = null, // JSON array of WebsiteInfo
+    val remoteUpdatedAt: Long = 0,
     val updatedAt: Long = System.currentTimeMillis(),
 )

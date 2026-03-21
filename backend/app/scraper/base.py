@@ -20,6 +20,7 @@ class RawShow:
     total_episodes: int | None = None
     category: str | None = None  # "movie" or "donghua"
     external_url: str | None = None
+    remote_updated_at: str | None = None  # timestamp from source website
 
 
 @dataclass

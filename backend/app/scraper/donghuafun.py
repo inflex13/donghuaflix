@@ -112,6 +112,7 @@ class DonghuaFunScraper(BaseScraper):
                 total_episodes=total_episodes,
                 category=category,
                 external_url=f"{self.base_url}/index.php/vod/detail/id/{vod_id}.html",
+                remote_updated_at=item.get("vod_time"),
             )
         except Exception as e:
             logger.error(f"Error parsing show: {e}")

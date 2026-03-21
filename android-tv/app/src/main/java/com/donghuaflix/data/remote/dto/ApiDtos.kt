@@ -17,6 +17,7 @@ data class ShowDto(
     val category: String? = null,
     @SerializedName("created_at") val createdAt: String? = null,
     @SerializedName("updated_at") val updatedAt: String? = null,
+    @SerializedName("remote_updated_at") val remoteUpdatedAt: String? = null,
     val websites: List<WebsiteInfoDto>? = null,
 )
 

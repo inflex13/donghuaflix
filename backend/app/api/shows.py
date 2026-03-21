@@ -44,6 +44,7 @@ def _show_to_response(show: Show, website_shows: list[WebsiteShow] | None = None
         category=show.category,
         created_at=show.created_at,
         updated_at=show.updated_at,
+        remote_updated_at=show.remote_updated_at,
         websites=websites,
     )
 
