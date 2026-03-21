@@ -42,6 +42,13 @@ class AnimeKhorScraper(BaseScraper):
                     soup = BeautifulSoup(resp.text, "lxml")
                     page_shows = self._parse_catalog_page(soup)
 
+                    # Assign remote_updated_at based on page order (most recent first)
+                    from datetime import datetime, timedelta
+                    base_time = datetime.utcnow()
+                    for i, show in enumerate(page_shows):
+                        # Each show gets a timestamp slightly older than the previous
+                        show.remote_updated_at = (base_time - timedelta(minutes=(page - 1) * len(page_shows) + i)).isoformat()
+
                     if not page_shows:
                         break
 
