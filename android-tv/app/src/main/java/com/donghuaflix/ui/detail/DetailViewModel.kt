@@ -104,6 +104,29 @@ class DetailViewModel @Inject constructor(
         }
     }
 
+    fun refreshWatchHistory() {
+        viewModelScope.launch {
+            val lastWatched = watchRepository.getLastWatchedForShow(showId)
+            val watchHistory = watchRepository.getWatchedEpisodesForShow(showId)
+            val watchedEpisodes = watchHistory.mapValues { (_, wp) ->
+                val fraction = if (wp.durationSeconds != null && wp.durationSeconds > 0) {
+                    wp.progressSeconds.toFloat() / wp.durationSeconds
+                } else 0f
+                EpisodeWatchInfo(
+                    episodeNumber = wp.episodeNumber,
+                    progressFraction = fraction,
+                    completed = wp.completed,
+                )
+            }
+            _uiState.update {
+                it.copy(
+                    lastWatched = lastWatched,
+                    watchedEpisodes = watchedEpisodes,
+                )
+            }
+        }
+    }
+
     fun toggleWatchlist() {
         viewModelScope.launch {
             watchRepository.toggleWatchlist(showId)

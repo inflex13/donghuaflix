@@ -159,13 +159,21 @@ fun PlayerScreen(
                         true
                     }
                     KeyEvent.KEYCODE_DPAD_LEFT -> {
-                        viewModel.showControls()
-                        player.seekTo(maxOf(0, player.currentPosition - 10_000))
+                        if (!uiState.showControls || viewModel.isFocusedOnSeekBar()) {
+                            viewModel.showControls()
+                            player.seekTo(maxOf(0, player.currentPosition - 10_000))
+                        } else {
+                            viewModel.focusPrevControl()
+                        }
                         true
                     }
                     KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                        viewModel.showControls()
-                        player.seekTo(player.currentPosition + 10_000)
+                        if (!uiState.showControls || viewModel.isFocusedOnSeekBar()) {
+                            viewModel.showControls()
+                            player.seekTo(player.currentPosition + 10_000)
+                        } else {
+                            viewModel.focusNextControl()
+                        }
                         true
                     }
                     KeyEvent.KEYCODE_DPAD_UP -> {
@@ -273,32 +281,49 @@ fun PlayerScreen(
                         .padding(24.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
-                    // Progress bar
+                    // Seek bar area — highlighted when focused
+                    val seekFocused = uiState.focusedControl == PlayerControl.SEEK_BAR
                     val progress = if (player.duration > 0) {
                         player.currentPosition.toFloat() / player.duration
                     } else 0f
 
-                    Box(
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(4.dp)
-                            .background(Color.Gray.copy(alpha = 0.5f), RoundedCornerShape(2.dp)),
+                            .clip(RoundedCornerShape(6.dp))
+                            .then(
+                                if (seekFocused) Modifier.border(2.dp, AccentFuchsia, RoundedCornerShape(6.dp))
+                                else Modifier
+                            )
+                            .background(if (seekFocused) AccentFuchsia.copy(alpha = 0.1f) else Color.Transparent)
+                            .padding(horizontal = 8.dp, vertical = 6.dp),
                     ) {
+                        // Progress bar
                         Box(
                             modifier = Modifier
-                                .fillMaxHeight()
-                                .fillMaxWidth(progress)
-                                .background(AccentFuchsia, RoundedCornerShape(2.dp)),
-                        )
-                    }
+                                .fillMaxWidth()
+                                .height(if (seekFocused) 6.dp else 4.dp)
+                                .background(Color.Gray.copy(alpha = 0.5f), RoundedCornerShape(3.dp)),
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .fillMaxWidth(progress)
+                                    .background(AccentFuchsia, RoundedCornerShape(3.dp)),
+                            )
+                        }
 
-                    // Time display
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                    ) {
-                        Text(formatTime(player.currentPosition), color = Color.White, fontSize = 12.sp)
-                        Text(formatTime(player.duration), color = TextMuted, fontSize = 12.sp)
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        // Time display
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            Text(formatTime(player.currentPosition), color = if (seekFocused) AccentFuchsia else Color.White, fontSize = 12.sp)
+                            if (seekFocused) Text("◀▶ Seek", color = AccentFuchsia, fontSize = 10.sp)
+                            Text(formatTime(player.duration), color = TextMuted, fontSize = 12.sp)
+                        }
                     }
 
                     // Control pills row

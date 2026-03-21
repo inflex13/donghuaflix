@@ -42,6 +42,18 @@ fun DetailScreen(
     val uiState by viewModel.uiState.collectAsState()
     val show = uiState.show
 
+    // Refresh watch history every time the screen becomes visible (e.g., returning from player)
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    androidx.compose.runtime.DisposableEffect(lifecycleOwner) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
+                viewModel.refreshWatchHistory()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
     // Use passed resumeEpisode if available, otherwise fall back to DB lookup
     val effectiveResumeEp = resumeEpisode ?: uiState.lastWatched?.episodeNumber
 
