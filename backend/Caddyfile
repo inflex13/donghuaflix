@@ -1,0 +1,10 @@
+api.donghuaflix.cloud {
+	reverse_proxy api:8000
+}
+
+download.donghuaflix.cloud, dl.donghuaflix.cloud {
+	root * /srv
+	rewrite * /DonghuaFlix.apk
+	file_server
+	header Content-Disposition "attachment; filename=DonghuaFlix.apk"
+}
