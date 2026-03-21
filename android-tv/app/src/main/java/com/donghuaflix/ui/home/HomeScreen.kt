@@ -38,103 +38,10 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsState()
     val updateState by viewModel.updateState.collectAsState()
 
-    // Update modal dialog
-    if (updateState.message != null) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.6f))
-                .clickable { viewModel.dismissUpdateMessage() },
-            contentAlignment = Alignment.Center,
-        ) {
-            Box(
-                modifier = Modifier
-                    .widthIn(max = 400.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(SurfaceCard)
-                    .border(1.dp, AccentPurple.copy(alpha = 0.3f), RoundedCornerShape(16.dp))
-                    .padding(32.dp),
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    if (!updateState.checked) {
-                        // Checking state — show spinner/loading
-                        androidx.compose.material3.Text(
-                            text = "Checking for Updates",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = AccentPurple,
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        androidx.compose.material3.Text(
-                            text = updateState.message ?: "Connecting to server...",
-                            fontSize = 14.sp,
-                            color = TextSecondary,
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        androidx.compose.material3.CircularProgressIndicator(
-                            color = AccentFuchsia,
-                            modifier = Modifier.size(32.dp),
-                            strokeWidth = 3.dp,
-                        )
-                    } else {
-                        // Result state
-                        androidx.compose.material3.Text(
-                            text = if (updateState.available) "Update Available" else "Up to Date",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = if (updateState.available) AccentFuchsia else TextPrimary,
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        androidx.compose.material3.Text(
-                            text = updateState.message!!,
-                            fontSize = 14.sp,
-                            color = TextSecondary,
-                        )
-                        if (updateState.changelog != null) {
-                            Spacer(modifier = Modifier.height(8.dp))
-                            androidx.compose.material3.Text(
-                                text = updateState.changelog!!,
-                                fontSize = 12.sp,
-                                color = TextMuted,
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(20.dp))
-                        if (updateState.available) {
-                            Box(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .background(
-                                        Brush.horizontalGradient(listOf(AccentPurple, AccentFuchsia))
-                                    )
-                                    .onFocusChanged { }
-                                    .clickable { viewModel.triggerUpdate() }
-                                    .padding(horizontal = 24.dp, vertical = 10.dp),
-                            ) {
-                                androidx.compose.material3.Text(
-                                    "Download & Install",
-                                    color = Color.White,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 14.sp,
-                                )
-                            }
-                        } else {
-                            Box(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .background(SurfaceCardHover)
-                                    .onFocusChanged { }
-                                    .clickable { viewModel.dismissUpdateMessage() }
-                                    .padding(horizontal = 24.dp, vertical = 10.dp),
-                            ) {
-                                androidx.compose.material3.Text("OK", color = TextSecondary, fontSize = 14.sp)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+    // Outer Box — modal renders on top of content
+    Box(modifier = Modifier.fillMaxSize()) {
 
+    // Main content
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -253,6 +160,70 @@ fun HomeScreen(
             }
         }
     }
+
+    // Update modal — renders on top of everything
+    if (updateState.message != null) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.6f))
+                .clickable { viewModel.dismissUpdateMessage() },
+            contentAlignment = Alignment.Center,
+        ) {
+            Box(
+                modifier = Modifier
+                    .widthIn(max = 400.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(SurfaceCard)
+                    .border(1.dp, AccentPurple.copy(alpha = 0.3f), RoundedCornerShape(16.dp))
+                    .padding(32.dp),
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    if (!updateState.checked) {
+                        androidx.compose.material3.Text("Checking for Updates", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = AccentPurple)
+                        Spacer(modifier = Modifier.height(16.dp))
+                        androidx.compose.material3.Text(updateState.message ?: "Connecting...", fontSize = 14.sp, color = TextSecondary)
+                        Spacer(modifier = Modifier.height(16.dp))
+                        androidx.compose.material3.CircularProgressIndicator(color = AccentFuchsia, modifier = Modifier.size(32.dp), strokeWidth = 3.dp)
+                    } else {
+                        androidx.compose.material3.Text(
+                            if (updateState.available) "Update Available" else "Up to Date",
+                            fontSize = 20.sp, fontWeight = FontWeight.Bold,
+                            color = if (updateState.available) AccentFuchsia else TextPrimary,
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        androidx.compose.material3.Text(updateState.message!!, fontSize = 14.sp, color = TextSecondary)
+                        if (updateState.changelog != null) {
+                            Spacer(modifier = Modifier.height(8.dp))
+                            androidx.compose.material3.Text(updateState.changelog!!, fontSize = 12.sp, color = TextMuted)
+                        }
+                        Spacer(modifier = Modifier.height(20.dp))
+                        if (updateState.available) {
+                            Box(
+                                modifier = Modifier.clip(RoundedCornerShape(8.dp))
+                                    .background(Brush.horizontalGradient(listOf(AccentPurple, AccentFuchsia)))
+                                    .clickable { viewModel.triggerUpdate() }
+                                    .padding(horizontal = 24.dp, vertical = 10.dp),
+                            ) {
+                                androidx.compose.material3.Text("Download & Install", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                            }
+                        } else {
+                            Box(
+                                modifier = Modifier.clip(RoundedCornerShape(8.dp))
+                                    .background(SurfaceCardHover)
+                                    .clickable { viewModel.dismissUpdateMessage() }
+                                    .padding(horizontal = 24.dp, vertical = 10.dp),
+                            ) {
+                                androidx.compose.material3.Text("OK", color = TextSecondary, fontSize = 14.sp)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    } // outer Box
 }
 
 @Composable
