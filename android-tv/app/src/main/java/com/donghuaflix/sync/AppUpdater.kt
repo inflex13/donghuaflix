@@ -39,6 +39,8 @@ class AppUpdater @Inject constructor(
     val updateState: StateFlow<UpdateInfo> = _updateState.asStateFlow()
 
     suspend fun checkForUpdate() {
+        // Show checking state immediately
+        _updateState.value = UpdateInfo(checked = false, message = "Checking for updates...")
         try {
             val latest = api.getLatestVersion()
             val currentVersionCode = BuildConfig.VERSION_CODE
