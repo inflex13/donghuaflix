@@ -44,11 +44,19 @@ class HomeViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            // Auto-update check on launch
+            try {
+                appUpdater.checkForUpdate()
+                if (appUpdater.updateState.value.available) {
+                    appUpdater.downloadAndInstall()
+                }
+                appUpdater.dismissUpdate()
+            } catch (_: Exception) {}
+
             try {
                 syncRepository.syncAll()
             } catch (_: Exception) {}
             loadHome()
-            // Image preloading disabled — Coil's lazy loading + disk cache handles this
         }
         observeContinueWatching()
         observeWatchlist()
