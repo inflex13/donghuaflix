@@ -302,31 +302,40 @@ private fun HeroBanner(show: Show, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(280.dp)
+            .height(260.dp)
             .padding(horizontal = 20.dp, vertical = 8.dp)
             .clip(RoundedCornerShape(16.dp))
             .clickable { onClick() },
     ) {
-        // Background poster
+        // Background poster — fill width, align top so face/title shows
         AsyncImage(
             model = show.posterUrl,
             contentDescription = show.title,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop,
+            alignment = Alignment.TopCenter,
         )
 
-        // Gradient overlays
+        // Full dark overlay for readability
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.45f)),
+        )
+
+        // Left gradient for text area
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(
                     Brush.horizontalGradient(
-                        colors = listOf(Obsidian.copy(alpha = 0.9f), Color.Transparent),
+                        colors = listOf(Obsidian.copy(alpha = 0.7f), Color.Transparent),
                         startX = 0f,
-                        endX = 600f,
+                        endX = 500f,
                     )
                 ),
         )
+        // Bottom gradient
         Box(
             modifier = Modifier
                 .fillMaxSize()
