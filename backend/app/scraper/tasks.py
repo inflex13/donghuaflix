@@ -120,23 +120,28 @@ def scrape_site(website_name: str, full: bool = False):
         logger.info(f"Found {len(raw_shows)} shows from {website_name}")
 
         from app.services.sync_service import sync_show_to_db
+        scraped_external_ids = []
         for raw_show in raw_shows:
             try:
                 sync_show_to_db(db, raw_show, website)
                 db.commit()
+                scraped_external_ids.append(raw_show.external_id)
             except Exception as e:
                 db.rollback()
                 logger.error(f"Error syncing show '{raw_show.title}': {e}")
 
-        # Scrape details for new/updated shows
-        from app.models import WebsiteShow
-        website_shows = db.execute(
-            select(WebsiteShow).where(WebsiteShow.website_id == website.id)
-        ).scalars().all()
+        # Scrape details only for shows from this scrape run that need it
+        from app.models import WebsiteShow, Episode
+        for ext_id in scraped_external_ids:
+            ws = db.execute(
+                select(WebsiteShow).where(
+                    WebsiteShow.website_id == website.id,
+                    WebsiteShow.external_id == ext_id,
+                )
+            ).scalar_one_or_none()
+            if not ws:
+                continue
 
-        for ws in website_shows:
-            # Only scrape detail if we don't have episodes yet or it's a full scrape
-            from app.models import Episode
             ep_count = db.execute(
                 select(Episode).where(Episode.website_show_id == ws.id)
             ).scalars().all()
