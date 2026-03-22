@@ -25,7 +25,7 @@ async def sync_data(
     )
     if since:
         show_query = show_query.where(Show.updated_at > since)
-    show_query = show_query.order_by(Show.updated_at.desc())
+    show_query = show_query.order_by(Show.remote_updated_at.desc().nulls_last(), Show.updated_at.desc())
 
     result = await db.execute(show_query)
     shows = result.scalars().unique().all()
