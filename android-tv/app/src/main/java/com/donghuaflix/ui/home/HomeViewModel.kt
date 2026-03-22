@@ -76,20 +76,28 @@ class HomeViewModel @Inject constructor(
         try {
             val sections = mutableListOf<HomeSection>()
 
-            // Recently Added — per website
-            val recent = showRepository.getRecentShows(500)
-            val donghuafunShows = recent.filter { show ->
-                show.websites.any { it.name == "donghuafun" }
-            }.take(20)
-            val animekhorShows = recent.filter { show ->
-                show.websites.any { it.name == "animekhor" }
-            }.take(20)
-
-            if (donghuafunShows.isNotEmpty()) {
-                sections.add(HomeSection("DonghuaFun", donghuafunShows, "donghuafun"))
+            // Recently Added — fetch directly from API per website for correct order
+            try {
+                val dfResponse = showRepository.getShowsFromApi(website = "donghuafun", pageSize = 20)
+                if (dfResponse.isNotEmpty()) {
+                    sections.add(HomeSection("DonghuaFun", dfResponse, "donghuafun"))
+                }
+            } catch (_: Exception) {
+                // Fallback to local
+                val local = showRepository.getRecentShows(20)
+                val df = local.filter { s -> s.websites.any { it.name == "donghuafun" } }.take(20)
+                if (df.isNotEmpty()) sections.add(HomeSection("DonghuaFun", df, "donghuafun"))
             }
-            if (animekhorShows.isNotEmpty()) {
-                sections.add(HomeSection("AnimeKhor", animekhorShows, "animekhor"))
+
+            try {
+                val akResponse = showRepository.getShowsFromApi(website = "animekhor", pageSize = 20)
+                if (akResponse.isNotEmpty()) {
+                    sections.add(HomeSection("AnimeKhor", akResponse, "animekhor"))
+                }
+            } catch (_: Exception) {
+                val local = showRepository.getRecentShows(20)
+                val ak = local.filter { s -> s.websites.any { it.name == "animekhor" } }.take(20)
+                if (ak.isNotEmpty()) sections.add(HomeSection("AnimeKhor", ak, "animekhor"))
             }
 
             // By Genre

@@ -106,8 +106,8 @@ async def get_app_version():
     apk_path = "/srv/DonghuaFlix.apk"
     apk_size = os.path.getsize(apk_path) if os.path.exists(apk_path) else 0
     return {
-        "version_code": 47,
-        "version_name": "2.15.2",
+        "version_code": 48,
+        "version_name": "2.15.3",
         "download_url": "https://dl.donghuaflix.cloud",
         "apk_size": apk_size,
         "changelog": "Player controls fix, watchlist indicator, episode watch history",

@@ -23,6 +23,15 @@ class ShowRepository @Inject constructor(
         entities.map { ShowMapper.entityToDomain(it) }
     }
 
+    suspend fun getShowsFromApi(website: String, pageSize: Int = 20): List<Show> {
+        return try {
+            val result = api.getShows(page = 1, pageSize = pageSize, website = website)
+            result.items.map { ShowMapper.dtoToDomain(it) }
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
     suspend fun getShow(id: Int): Show? {
         // Try local first
         val local = showDao.getShowById(id)
