@@ -14,11 +14,13 @@ object ShowMapper {
 
     private fun parseTimestamp(ts: String?): Long {
         if (ts == null) return 0
+        // Strip microseconds if present (e.g., .571065)
+        val clean = ts.replace(Regex("\\.\\d+$"), "")
         return try {
-            java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.US).parse(ts)?.time ?: 0
+            java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.US).parse(clean)?.time ?: 0
         } catch (_: Exception) {
             try {
-                java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.US).parse(ts)?.time ?: 0
+                java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.US).parse(clean)?.time ?: 0
             } catch (_: Exception) { 0 }
         }
     }
