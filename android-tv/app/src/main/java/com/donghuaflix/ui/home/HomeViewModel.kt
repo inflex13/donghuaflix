@@ -77,7 +77,7 @@ class HomeViewModel @Inject constructor(
             val sections = mutableListOf<HomeSection>()
 
             // Recently Added — per website
-            val recent = showRepository.getRecentShows(100)
+            val recent = showRepository.getRecentShows(500)
             val donghuafunShows = recent.filter { show ->
                 show.websites.any { it.name == "donghuafun" }
             }.take(20)
