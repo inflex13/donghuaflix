@@ -31,9 +31,10 @@ class AnimeKhorScraper(BaseScraper):
         async with httpx.AsyncClient(timeout=30, headers=self.headers, follow_redirects=True) as client:
             for page in range(1, max_pages + 1):
                 try:
-                    url = f"{self.base_url}/donghua-series/"
+                    # Use update-ordered listing to match website's "Latest Release"
+                    url = f"{self.base_url}/anime/?status=&type=&order=update"
                     if page > 1:
-                        url = f"{self.base_url}/donghua-series/page/{page}/"
+                        url = f"{self.base_url}/anime/page/{page}/?status=&type=&order=update"
 
                     resp = await client.get(url)
                     if resp.status_code != 200:
