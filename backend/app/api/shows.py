@@ -75,7 +75,12 @@ async def list_shows(
     count_query = select(func.count()).select_from(query.subquery())
     total = (await db.execute(count_query)).scalar() or 0
 
-    query = query.order_by(Show.remote_updated_at.desc().nulls_last(), Show.updated_at.desc()).offset((page - 1) * page_size).limit(page_size)
+    # Sort by website_show's timestamp when filtering by website, otherwise by show's
+    if website:
+        query = query.order_by(WebsiteShow.remote_updated_at.desc().nulls_last(), Show.updated_at.desc())
+    else:
+        query = query.order_by(Show.remote_updated_at.desc().nulls_last(), Show.updated_at.desc())
+    query = query.offset((page - 1) * page_size).limit(page_size)
     result = await db.execute(query)
     shows = result.scalars().unique().all()
 

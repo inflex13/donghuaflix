@@ -85,11 +85,22 @@ def sync_show_to_db(
         )
     ).scalar_one_or_none()
 
+    # Parse remote timestamp
+    ws_remote_ts = None
+    if raw_show.remote_updated_at:
+        from datetime import datetime as dt
+        try:
+            ws_remote_ts = dt.fromisoformat(raw_show.remote_updated_at) if isinstance(raw_show.remote_updated_at, str) else raw_show.remote_updated_at
+        except (ValueError, TypeError):
+            pass
+
     if ws:
         ws.title_on_site = raw_show.title
         ws.poster_url_on_site = raw_show.poster_url
         ws.episode_count_on_site = raw_show.total_episodes
         ws.show_id = show.id
+        if ws_remote_ts:
+            ws.remote_updated_at = ws_remote_ts
     else:
         ws = WebsiteShow(
             show_id=show.id,
@@ -99,6 +110,7 @@ def sync_show_to_db(
             title_on_site=raw_show.title,
             poster_url_on_site=raw_show.poster_url,
             episode_count_on_site=raw_show.total_episodes,
+            remote_updated_at=ws_remote_ts,
         )
         db.add(ws)
         db.flush()

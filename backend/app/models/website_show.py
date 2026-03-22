@@ -18,6 +18,7 @@ class WebsiteShow(Base):
     title_on_site: Mapped[str | None] = mapped_column(String(500), nullable=True)
     poster_url_on_site: Mapped[str | None] = mapped_column(Text, nullable=True)
     episode_count_on_site: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    remote_updated_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
