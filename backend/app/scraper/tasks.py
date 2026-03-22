@@ -130,8 +130,9 @@ def scrape_site(website_name: str, full: bool = False):
                 db.rollback()
                 logger.error(f"Error syncing show '{raw_show.title}': {e}")
 
-        # Scrape details only for shows from this scrape run that need it
+        # Scrape details for shows that need episodes or have new episodes
         from app.models import WebsiteShow, Episode
+        from sqlalchemy import func as sqlfunc
         for ext_id in scraped_external_ids:
             ws = db.execute(
                 select(WebsiteShow).where(
@@ -142,11 +143,14 @@ def scrape_site(website_name: str, full: bool = False):
             if not ws:
                 continue
 
-            ep_count = db.execute(
-                select(Episode).where(Episode.website_show_id == ws.id)
-            ).scalars().all()
+            db_ep_count = db.execute(
+                select(sqlfunc.count()).select_from(Episode).where(Episode.website_show_id == ws.id)
+            ).scalar() or 0
 
-            if not ep_count or full:
+            # Scrape if: no episodes, full scrape, or website reports more episodes than we have
+            site_ep_count = ws.episode_count_on_site or 0
+            if db_ep_count == 0 or full or (site_ep_count > 0 and site_ep_count > db_ep_count):
+                logger.info(f"Scraping detail for {ext_id}: db={db_ep_count} site={site_ep_count}")
                 scrape_show_detail.delay(website_name, ws.external_id)
 
         # Update last scraped timestamp
