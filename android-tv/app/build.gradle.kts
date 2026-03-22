@@ -14,8 +14,8 @@ android {
         applicationId = "com.donghuaflix"
         minSdk = 23
         targetSdk = 35
-        versionCode = 48
-        versionName = "2.15.3"
+        versionCode = 49
+        versionName = "2.16.0"
 
         // Backend API URL - change to VPS IP when deployed
         buildConfigField("String", "API_BASE_URL", "\"https://api.donghuaflix.cloud\"")

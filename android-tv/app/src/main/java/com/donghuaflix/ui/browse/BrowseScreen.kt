@@ -65,7 +65,29 @@ fun BrowseScreen(
             )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Website filter chips
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = Modifier.padding(bottom = 12.dp),
+        ) {
+            FilterChip(
+                label = "All Sites",
+                isSelected = uiState.selectedWebsite == null,
+                onClick = { viewModel.selectWebsite(null) },
+            )
+            FilterChip(
+                label = "DonghuaFun",
+                isSelected = uiState.selectedWebsite == "donghuafun",
+                onClick = { viewModel.selectWebsite("donghuafun") },
+            )
+            FilterChip(
+                label = "AnimeKhor",
+                isSelected = uiState.selectedWebsite == "animekhor",
+                onClick = { viewModel.selectWebsite("animekhor") },
+            )
+        }
 
         // Genre filter chips
         LazyRow(

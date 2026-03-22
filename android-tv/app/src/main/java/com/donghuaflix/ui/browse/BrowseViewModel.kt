@@ -16,6 +16,7 @@ data class BrowseUiState(
     val shows: List<Show> = emptyList(),
     val genres: List<String> = emptyList(),
     val selectedGenre: String? = null,
+    val selectedWebsite: String? = null,
     val isLoading: Boolean = true,
 )
 
@@ -43,17 +44,32 @@ class BrowseViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             val genre = _uiState.value.selectedGenre
-            val shows = if (genre != null) {
+            val website = _uiState.value.selectedWebsite
+
+            var shows = if (genre != null) {
                 showRepository.getShowsByGenre(genre)
             } else {
-                showRepository.getRecentShows(100)
+                showRepository.getRecentShows(500)
             }
+
+            // Filter by website if selected
+            if (website != null) {
+                shows = shows.filter { show ->
+                    show.websites.any { it.name == website }
+                }
+            }
+
             _uiState.update { it.copy(shows = shows, isLoading = false) }
         }
     }
 
     fun selectGenre(genre: String?) {
         _uiState.update { it.copy(selectedGenre = genre) }
+        loadShows()
+    }
+
+    fun selectWebsite(website: String?) {
+        _uiState.update { it.copy(selectedWebsite = website) }
         loadShows()
     }
 }
