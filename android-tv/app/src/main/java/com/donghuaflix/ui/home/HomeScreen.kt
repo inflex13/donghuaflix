@@ -105,6 +105,9 @@ fun HomeScreen(
                         onWatchlistClick = onWatchlistClick,
                         onSyncClick = { viewModel.fullResync() },
                         onUpdateClick = { viewModel.checkForUpdate() },
+                        onExitClick = {
+                            android.os.Process.killProcess(android.os.Process.myPid())
+                        },
                     )
                 }
 
@@ -236,6 +239,7 @@ private fun TopNavBar(
     onWatchlistClick: () -> Unit,
     onSyncClick: () -> Unit,
     onUpdateClick: () -> Unit,
+    onExitClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -269,6 +273,8 @@ private fun TopNavBar(
         NavPill("Sync", onClick = onSyncClick)
         Spacer(modifier = Modifier.width(8.dp))
         NavPill("Update", onClick = onUpdateClick)
+        Spacer(modifier = Modifier.width(8.dp))
+        NavPill("Exit", onClick = onExitClick)
     }
 }
 
