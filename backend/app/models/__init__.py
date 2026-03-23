@@ -6,8 +6,10 @@ from app.models.watch_history import WatchHistory
 from app.models.watchlist import Watchlist
 from app.models.website import Website
 from app.models.website_show import WebsiteShow
+from app.models.crash_log import CrashLog
 
 __all__ = [
+    "CrashLog",
     "Episode",
     "Show",
     "Source",

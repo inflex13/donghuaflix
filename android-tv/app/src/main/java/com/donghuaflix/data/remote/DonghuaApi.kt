@@ -80,4 +80,8 @@ interface DonghuaApi {
     // App update
     @GET("app/version")
     suspend fun getLatestVersion(): AppVersionDto
+
+    // Crash logging
+    @POST("api/crash-logs")
+    suspend fun sendCrashLog(@Body log: CrashLogRequest): retrofit2.Response<Unit>
 }

@@ -48,13 +48,23 @@ fun PlayerScreen(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
 
-    // ExoPlayer instance — prefer text tracks so subtitles render automatically
+    // Keep screen on during playback
+    val activity = context as? android.app.Activity
+    DisposableEffect(Unit) {
+        activity?.window?.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        onDispose {
+            activity?.window?.clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+    }
+
+    // ExoPlayer instance — prefer English text tracks, respect saved subtitle toggle
     val player = remember {
         ExoPlayer.Builder(context)
             .build()
             .apply {
                 trackSelectionParameters = trackSelectionParameters.buildUpon()
                     .setPreferredTextLanguage("en")
+                    .setTrackTypeDisabled(androidx.media3.common.C.TRACK_TYPE_TEXT, !uiState.subtitleEnabled)
                     .build()
             }
     }
@@ -67,6 +77,13 @@ fun PlayerScreen(
         }
     }
 
+    // Toggle subtitle track visibility without rebuilding media source
+    LaunchedEffect(uiState.subtitleEnabled) {
+        player.trackSelectionParameters = player.trackSelectionParameters.buildUpon()
+            .setTrackTypeDisabled(androidx.media3.common.C.TRACK_TYPE_TEXT, !uiState.subtitleEnabled)
+            .build()
+    }
+
     // Set media source when stream URL changes
     LaunchedEffect(uiState.streamUrl) {
         val url = uiState.streamUrl ?: return@LaunchedEffect
@@ -75,7 +92,7 @@ fun PlayerScreen(
         // Build MediaItem with subtitle tracks
         val mediaItemBuilder = MediaItem.Builder().setUri(url)
 
-        // Add subtitle tracks (prefer English)
+        // Always add subtitle tracks (visibility controlled by track selection)
         val subtitleConfigs = uiState.subtitles.map { sub ->
             MediaItem.SubtitleConfiguration.Builder(android.net.Uri.parse(sub.url))
                 .setMimeType(androidx.media3.common.MimeTypes.APPLICATION_SUBRIP)
@@ -188,7 +205,7 @@ fun PlayerScreen(
                     }
                     KeyEvent.KEYCODE_DPAD_UP -> {
                         if (uiState.showControls) {
-                            viewModel.focusPrevControl()
+                            viewModel.focusUp()
                         } else {
                             viewModel.showControls()
                         }
@@ -196,7 +213,7 @@ fun PlayerScreen(
                     }
                     KeyEvent.KEYCODE_DPAD_DOWN -> {
                         if (uiState.showControls) {
-                            viewModel.focusNextControl()
+                            viewModel.focusDown()
                         } else {
                             viewModel.showControls()
                         }
@@ -414,18 +431,25 @@ fun PlayerScreen(
                             isActive = true,
                         )
 
-                        // Subtitle size pill (only when subtitles are available)
+                        // Subtitle controls (only when subtitles are available)
                         if (uiState.subtitles.isNotEmpty()) {
                             ControlPill(
-                                text = uiState.subtitleSize.label,
-                                isFocused = uiState.focusedControl == PlayerControl.SUB_SIZE,
-                                isActive = true,
+                                text = if (uiState.subtitleEnabled) "CC: On" else "CC: Off",
+                                isFocused = uiState.focusedControl == PlayerControl.SUB_TOGGLE,
+                                isActive = uiState.subtitleEnabled,
                             )
-                            ControlPill(
-                                text = if (uiState.subtitleBgEnabled) "BG: On" else "BG: Off",
-                                isFocused = uiState.focusedControl == PlayerControl.SUB_BG,
-                                isActive = uiState.subtitleBgEnabled,
-                            )
+                            if (uiState.subtitleEnabled) {
+                                ControlPill(
+                                    text = uiState.subtitleSize.label,
+                                    isFocused = uiState.focusedControl == PlayerControl.SUB_SIZE,
+                                    isActive = true,
+                                )
+                                ControlPill(
+                                    text = if (uiState.subtitleBgEnabled) "BG: On" else "BG: Off",
+                                    isFocused = uiState.focusedControl == PlayerControl.SUB_BG,
+                                    isActive = uiState.subtitleBgEnabled,
+                                )
+                            }
                         }
 
                         // Prev EP pill (conditional)

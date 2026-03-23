@@ -3,6 +3,8 @@ package com.donghuaflix.ui.player
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.donghuaflix.data.local.SubtitlePreferences
+import com.donghuaflix.data.remote.CrashLogger
 import com.donghuaflix.data.repository.ShowRepository
 import com.donghuaflix.data.repository.WatchRepository
 import com.donghuaflix.domain.model.Episode
@@ -19,7 +21,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-enum class PlayerControl { SEEK_BAR, PLAY_PAUSE, SOURCE, SUB_SIZE, SUB_BG, PREV_EP, NEXT_EP, AUTOPLAY }
+enum class PlayerControl { SEEK_BAR, PLAY_PAUSE, SOURCE, SUB_TOGGLE, SUB_SIZE, SUB_BG, PREV_EP, NEXT_EP, AUTOPLAY }
 
 enum class SubtitleSize(val label: String, val fraction: Float) {
     SMALL("Sub: S", 0.04f),
@@ -45,6 +47,7 @@ data class PlayerUiState(
     val hasPrevEpisode: Boolean = false,
     val playbackEnded: Boolean = false,
     val focusedControl: PlayerControl = PlayerControl.SEEK_BAR,
+    val subtitleEnabled: Boolean = true,
     val subtitleSize: SubtitleSize = SubtitleSize.MEDIUM,
     val subtitleBgEnabled: Boolean = true,
 )
@@ -54,13 +57,20 @@ class PlayerViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val showRepository: ShowRepository,
     private val watchRepository: WatchRepository,
+    private val subtitlePrefs: SubtitlePreferences,
+    private val crashLogger: CrashLogger,
 ) : ViewModel() {
 
     private val showId: Int = savedStateHandle["showId"] ?: 0
     private val initialEpisodeNumber: Int = savedStateHandle["episodeNumber"] ?: 1
     private val website: String? = savedStateHandle.get<String>("website")?.takeIf { it.isNotBlank() }
 
-    private val _uiState = MutableStateFlow(PlayerUiState(episodeNumber = initialEpisodeNumber))
+    private val _uiState = MutableStateFlow(PlayerUiState(
+        episodeNumber = initialEpisodeNumber,
+        subtitleEnabled = subtitlePrefs.enabled,
+        subtitleSize = subtitlePrefs.size,
+        subtitleBgEnabled = subtitlePrefs.bgEnabled,
+    ))
     val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
 
     private var progressJob: Job? = null
@@ -103,6 +113,11 @@ class PlayerViewModel @Inject constructor(
     private suspend fun loadEpisodeSources(episode: Episode) {
         val sources = showRepository.getEpisodeSources(episode.id)
         if (sources.isEmpty()) {
+            crashLogger.logError(
+                message = "No sources available for episode ${episode.episodeNumber} of show $showId",
+                screen = "Player",
+                extra = """{"show_id":$showId,"episode_id":${episode.id},"episode_number":${episode.episodeNumber}}""",
+            )
             _uiState.update { it.copy(isLoading = false, error = "No sources available") }
             return
         }
@@ -136,12 +151,22 @@ class PlayerViewModel @Inject constructor(
             }
         }
 
+        crashLogger.logError(
+            message = "No working source found for episode ${_uiState.value.episodeNumber} of show $showId",
+            screen = "Player",
+            extra = """{"show_id":$showId,"episode_number":${_uiState.value.episodeNumber},"sources_tried":${sortedSources.size}}""",
+        )
         _uiState.update { it.copy(isLoading = false, error = "No working source found") }
     }
 
     private suspend fun tryResolveSource(source: VideoSource): VideoSource? {
         // Always call resolve to get fresh subtitles (even if sourceUrl is cached)
-        return showRepository.resolveSource(source.id) ?: source.takeIf { it.sourceUrl != null }
+        return try {
+            showRepository.resolveSource(source.id) ?: source.takeIf { it.sourceUrl != null }
+        } catch (e: Exception) {
+            crashLogger.logCrash(e, screen = "Player")
+            source.takeIf { it.sourceUrl != null }
+        }
     }
 
     fun selectSource(source: VideoSource) {
@@ -215,6 +240,7 @@ class PlayerViewModel @Inject constructor(
         _uiState.update { it.copy(hasNextEpisode = hasNext, hasPrevEpisode = hasPrev) }
     }
 
+    /** LEFT/RIGHT within the pill row */
     fun focusNextControl() {
         val controls = getAvailableControls()
         val currentIdx = controls.indexOf(_uiState.value.focusedControl)
@@ -229,11 +255,26 @@ class PlayerViewModel @Inject constructor(
         _uiState.update { it.copy(focusedControl = controls[prevIdx]) }
     }
 
+    /** UP: jump to seek bar from any pill */
+    fun focusUp() {
+        if (_uiState.value.focusedControl != PlayerControl.SEEK_BAR) {
+            _uiState.update { it.copy(focusedControl = PlayerControl.SEEK_BAR) }
+        }
+    }
+
+    /** DOWN: jump from seek bar to first pill */
+    fun focusDown() {
+        if (_uiState.value.focusedControl == PlayerControl.SEEK_BAR) {
+            _uiState.update { it.copy(focusedControl = PlayerControl.PLAY_PAUSE) }
+        }
+    }
+
     fun activateFocusedControl(isPlaying: Boolean): Boolean {
         return when (_uiState.value.focusedControl) {
             PlayerControl.SEEK_BAR -> false // seek handled by left/right D-pad
             PlayerControl.PLAY_PAUSE -> false // handled by caller (needs player reference)
             PlayerControl.SOURCE -> { cycleSource(); true }
+            PlayerControl.SUB_TOGGLE -> { toggleSubtitleEnabled(); true }
             PlayerControl.SUB_SIZE -> { cycleSubtitleSize(); true }
             PlayerControl.SUB_BG -> { toggleSubtitleBg(); true }
             PlayerControl.PREV_EP -> { previousEpisode(); true }
@@ -250,15 +291,25 @@ class PlayerViewModel @Inject constructor(
         selectSource(sources[nextIdx])
     }
 
+    fun toggleSubtitleEnabled() {
+        val newVal = !_uiState.value.subtitleEnabled
+        subtitlePrefs.enabled = newVal
+        _uiState.update { it.copy(subtitleEnabled = newVal) }
+    }
+
     fun cycleSubtitleSize() {
         val sizes = SubtitleSize.entries
         val currentIdx = sizes.indexOf(_uiState.value.subtitleSize)
         val nextIdx = (currentIdx + 1) % sizes.size
-        _uiState.update { it.copy(subtitleSize = sizes[nextIdx]) }
+        val newSize = sizes[nextIdx]
+        subtitlePrefs.size = newSize
+        _uiState.update { it.copy(subtitleSize = newSize) }
     }
 
     fun toggleSubtitleBg() {
-        _uiState.update { it.copy(subtitleBgEnabled = !it.subtitleBgEnabled) }
+        val newVal = !_uiState.value.subtitleBgEnabled
+        subtitlePrefs.bgEnabled = newVal
+        _uiState.update { it.copy(subtitleBgEnabled = newVal) }
     }
 
     fun isFocusedOnSeekBar(): Boolean = _uiState.value.focusedControl == PlayerControl.SEEK_BAR
@@ -267,8 +318,11 @@ class PlayerViewModel @Inject constructor(
         val controls = mutableListOf(PlayerControl.SEEK_BAR, PlayerControl.PLAY_PAUSE)
         controls.add(PlayerControl.SOURCE)
         if (_uiState.value.subtitles.isNotEmpty()) {
-            controls.add(PlayerControl.SUB_SIZE)
-            controls.add(PlayerControl.SUB_BG)
+            controls.add(PlayerControl.SUB_TOGGLE)
+            if (_uiState.value.subtitleEnabled) {
+                controls.add(PlayerControl.SUB_SIZE)
+                controls.add(PlayerControl.SUB_BG)
+            }
         }
         if (_uiState.value.hasPrevEpisode) controls.add(PlayerControl.PREV_EP)
         if (_uiState.value.hasNextEpisode) controls.add(PlayerControl.NEXT_EP)

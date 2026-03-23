@@ -93,3 +93,13 @@ data class AppVersionDto(
     @SerializedName("apk_size") val apkSize: Long = 0,
     val changelog: String? = null,
 )
+
+data class CrashLogRequest(
+    val level: String,
+    val message: String,
+    val stacktrace: String? = null,
+    @SerializedName("app_version") val appVersion: String,
+    @SerializedName("device_info") val deviceInfo: String,
+    val screen: String? = null,
+    val extra: String? = null,
+)

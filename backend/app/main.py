@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import shows, episodes, sources, watch, watchlist, sync, discovery, assets
+from app.api import shows, episodes, sources, watch, watchlist, sync, discovery, assets, crash_logs
 
 
 @asynccontextmanager
@@ -34,6 +34,7 @@ app.include_router(watchlist.router, prefix="/api/watchlist", tags=["watchlist"]
 app.include_router(sync.router, prefix="/api/sync", tags=["sync"])
 app.include_router(discovery.router, prefix="/api", tags=["discovery"])
 app.include_router(assets.router, prefix="/assets", tags=["assets"])
+app.include_router(crash_logs.router, prefix="/api/crash-logs", tags=["crash-logs"])
 
 
 @app.get("/health")
@@ -106,9 +107,9 @@ async def get_app_version():
     apk_path = "/srv/DonghuaFlix.apk"
     apk_size = os.path.getsize(apk_path) if os.path.exists(apk_path) else 0
     return {
-        "version_code": 55,
-        "version_name": "2.17.2",
+        "version_code": 59,
+        "version_name": "2.19.0",
         "download_url": "https://dl.donghuaflix.cloud",
         "apk_size": apk_size,
-        "changelog": "Subtitle size (S/M/L) + background toggle in player",
+        "changelog": "Crash logging, keep screen on, subtitle toggle fix, D-pad nav fix",
     }
