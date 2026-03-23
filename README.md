@@ -28,7 +28,8 @@ Personal Netflix-like Android TV app for watching Chinese animation (donghua). S
 - Netflix-style home screen with Continue Watching, per-website rows, genre rows
 - Show detail with website selector, episode grid with watch history indicators
 - ExoPlayer with HLS/DASH/MP4, English subtitles (SRT from Dailymotion)
-- Multi-source video with D-pad controls (seek bar, play/pause, source switcher, prev/next EP, autoplay)
+- Subtitle controls: size (S/M/L), background toggle (30% black or transparent)
+- Multi-source video with D-pad controls (seek bar, play/pause, source switcher, subtitle size, subtitle BG, prev/next EP, autoplay)
 - Source auto-fallback (Rumble → ok.ru if source is removed)
 - Watch progress tracking with resume
 - Mark All Watched button
