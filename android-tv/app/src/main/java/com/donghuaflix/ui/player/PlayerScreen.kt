@@ -48,8 +48,16 @@ fun PlayerScreen(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
 
-    // ExoPlayer instance
-    val player = remember { ExoPlayer.Builder(context).build() }
+    // ExoPlayer instance — prefer text tracks so subtitles render automatically
+    val player = remember {
+        ExoPlayer.Builder(context)
+            .build()
+            .apply {
+                trackSelectionParameters = trackSelectionParameters.buildUpon()
+                    .setPreferredTextLanguage("en")
+                    .build()
+            }
+    }
 
     // Auto-hide controls
     LaunchedEffect(uiState.showControls) {
@@ -212,11 +220,38 @@ fun PlayerScreen(
     ) {
         // Video player
         if (uiState.streamUrl != null) {
+            val subtitleSize = uiState.subtitleSize
+            val subtitleBg = uiState.subtitleBgEnabled
             AndroidView(
                 factory = { ctx ->
                     PlayerView(ctx).apply {
                         this.player = player
                         useController = false
+                        subtitleView?.apply {
+                            setStyle(androidx.media3.ui.CaptionStyleCompat(
+                                android.graphics.Color.WHITE,
+                                if (subtitleBg) android.graphics.Color.argb(77, 0, 0, 0) else android.graphics.Color.TRANSPARENT,
+                                android.graphics.Color.TRANSPARENT,
+                                androidx.media3.ui.CaptionStyleCompat.EDGE_TYPE_DROP_SHADOW,
+                                android.graphics.Color.BLACK,
+                                android.graphics.Typeface.DEFAULT_BOLD,
+                            ))
+                            setFractionalTextSize(subtitleSize.fraction)
+                        }
+                    }
+                },
+                update = { playerView ->
+                    playerView.subtitleView?.apply {
+                        setPadding(48, 0, 48, 24)
+                        setFractionalTextSize(subtitleSize.fraction)
+                        setStyle(androidx.media3.ui.CaptionStyleCompat(
+                            android.graphics.Color.WHITE,
+                            if (subtitleBg) android.graphics.Color.argb(77, 0, 0, 0) else android.graphics.Color.TRANSPARENT,
+                            android.graphics.Color.TRANSPARENT,
+                            androidx.media3.ui.CaptionStyleCompat.EDGE_TYPE_DROP_SHADOW,
+                            android.graphics.Color.BLACK,
+                            android.graphics.Typeface.DEFAULT_BOLD,
+                        ))
                     }
                 },
                 modifier = Modifier.fillMaxSize(),
@@ -378,6 +413,20 @@ fun PlayerScreen(
                             isFocused = uiState.focusedControl == PlayerControl.SOURCE,
                             isActive = true,
                         )
+
+                        // Subtitle size pill (only when subtitles are available)
+                        if (uiState.subtitles.isNotEmpty()) {
+                            ControlPill(
+                                text = uiState.subtitleSize.label,
+                                isFocused = uiState.focusedControl == PlayerControl.SUB_SIZE,
+                                isActive = true,
+                            )
+                            ControlPill(
+                                text = if (uiState.subtitleBgEnabled) "BG: On" else "BG: Off",
+                                isFocused = uiState.focusedControl == PlayerControl.SUB_BG,
+                                isActive = uiState.subtitleBgEnabled,
+                            )
+                        }
 
                         // Prev EP pill (conditional)
                         if (uiState.hasPrevEpisode) {
