@@ -27,13 +27,60 @@ final class HomeViewModel {
         error = nil
 
         do {
-            async let sectionsTask = showRepository.getHomeSections()
+            var builtSections: [HomeSection] = []
+
+            // Recently Added — per website (like Android TV)
+            async let dfTask = showRepository.getShows(page: 1, pageSize: 20, website: "donghuafun")
+            async let akTask = showRepository.getShows(page: 1, pageSize: 20, website: "animekhor")
             async let continueTask = watchRepository.getContinueWatching()
             async let watchlistTask: Void = watchRepository.refreshWatchlistCache()
 
-            let (fetchedSections, fetchedContinue, _) = try await (sectionsTask, continueTask, watchlistTask)
+            let (dfResult, akResult, fetchedContinue, _) = try await (dfTask, akTask, continueTask, watchlistTask)
 
-            sections = fetchedSections
+            if !dfResult.items.isEmpty {
+                builtSections.append(HomeSection(
+                    title: "DonghuaFun",
+                    sectionType: "donghuafun",
+                    shows: dfResult.items.map { $0.toDomain() }
+                ))
+            }
+
+            if !akResult.items.isEmpty {
+                builtSections.append(HomeSection(
+                    title: "AnimeKhor",
+                    sectionType: "animekhor",
+                    shows: akResult.items.map { $0.toDomain() }
+                ))
+            }
+
+            // Genre rows
+            do {
+                let genres = try await showRepository.getAllGenres()
+                for genre in genres.prefix(4) {
+                    let genreResult = try await showRepository.getShows(page: 1, pageSize: 20, genre: genre)
+                    if !genreResult.items.isEmpty {
+                        builtSections.append(HomeSection(
+                            title: genre,
+                            sectionType: "genre",
+                            shows: genreResult.items.map { $0.toDomain() }
+                        ))
+                    }
+                }
+            } catch { /* genre rows are optional */ }
+
+            // Completed series
+            do {
+                let completedResult = try await showRepository.getShows(page: 1, pageSize: 20, status: "completed")
+                if !completedResult.items.isEmpty {
+                    builtSections.append(HomeSection(
+                        title: "Completed Series",
+                        sectionType: "completed",
+                        shows: completedResult.items.map { $0.toDomain() }
+                    ))
+                }
+            } catch { /* optional */ }
+
+            sections = builtSections
             continueWatching = fetchedContinue
             watchlistIds = watchRepository.watchlistIds
         } catch {
@@ -47,23 +94,6 @@ final class HomeViewModel {
 
     @MainActor
     func fullResync() async {
-        isLoading = true
-        error = nil
-
-        do {
-            async let sectionsTask = showRepository.getHomeSections()
-            async let continueTask = watchRepository.getContinueWatching()
-            async let watchlistTask: Void = watchRepository.refreshWatchlistCache()
-
-            let (fetchedSections, fetchedContinue, _) = try await (sectionsTask, continueTask, watchlistTask)
-
-            sections = fetchedSections
-            continueWatching = fetchedContinue
-            watchlistIds = watchRepository.watchlistIds
-        } catch {
-            self.error = error.localizedDescription
-        }
-
-        isLoading = false
+        await loadHome()
     }
 }
