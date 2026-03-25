@@ -7,10 +7,6 @@ struct HomeView: View {
 
     @State private var viewModel: HomeViewModel?
 
-    private var heroShow: Show? {
-        viewModel?.sections.first?.shows.first
-    }
-
     var body: some View {
         ZStack {
             DonghuaFlixTheme.backgroundGradient.ignoresSafeArea()
@@ -62,11 +58,6 @@ struct HomeView: View {
     private func contentScrollView(_ vm: HomeViewModel) -> some View {
         ScrollView(.vertical, showsIndicators: false) {
             LazyVStack(alignment: .leading, spacing: 24) {
-                // Hero banner
-                if let hero = heroShow {
-                    heroBanner(hero)
-                }
-
                 // Continue watching
                 if !vm.continueWatching.isEmpty {
                     sectionHeader(title: "Continue Watching", accentColor: DonghuaFlixTheme.accentFuchsia)
@@ -82,105 +73,6 @@ struct HomeView: View {
                 Spacer(minLength: 80)
             }
         }
-    }
-
-    // MARK: - Hero Banner
-
-    @ViewBuilder
-    private func heroBanner(_ show: Show) -> some View {
-        Button {
-            router.navigate(to: .detail(showId: show.id))
-        } label: {
-            ZStack(alignment: .bottomLeading) {
-                // Background image
-                if let urlString = show.posterUrl, let url = URL(string: urlString) {
-                    AsyncImage(url: url) { phase in
-                        switch phase {
-                        case .success(let image):
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: heroBannerHeight)
-                                .clipped()
-                        default:
-                            DonghuaFlixTheme.surfaceDark
-                                .frame(height: heroBannerHeight)
-                        }
-                    }
-                } else {
-                    DonghuaFlixTheme.surfaceDark
-                        .frame(height: heroBannerHeight)
-                }
-
-                // Gradient overlays
-                VStack(spacing: 0) {
-                    DonghuaFlixTheme.fadeToBlackTop
-                        .frame(height: 80)
-                    Spacer()
-                    DonghuaFlixTheme.fadeToBlackBottom
-                        .frame(height: 160)
-                }
-                .frame(height: heroBannerHeight)
-
-                // Info overlay
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(show.title)
-                        .font(.title.bold())
-                        .foregroundStyle(DonghuaFlixTheme.textPrimary)
-                        .lineLimit(2)
-
-                    HStack(spacing: 8) {
-                        if let rating = show.rating, rating > 0 {
-                            HStack(spacing: 3) {
-                                Image(systemName: "star.fill")
-                                    .font(.caption)
-                                    .foregroundStyle(DonghuaFlixTheme.accentGold)
-                                Text(String(format: "%.1f", rating))
-                                    .font(.subheadline.bold())
-                                    .foregroundStyle(DonghuaFlixTheme.textPrimary)
-                            }
-                        }
-                        if let year = show.year {
-                            Text("\(year)")
-                                .font(.subheadline)
-                                .foregroundStyle(DonghuaFlixTheme.textSecondary)
-                        }
-                    }
-
-                    if !show.genres.isEmpty {
-                        Text(show.genres.prefix(3).joined(separator: " · "))
-                            .font(.caption)
-                            .foregroundStyle(DonghuaFlixTheme.textSecondary)
-                    }
-
-                    // Watch Now button
-                    HStack(spacing: 6) {
-                        Image(systemName: "play.fill")
-                            .font(.caption)
-                        Text("Watch Now")
-                            .font(.subheadline.bold())
-                    }
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 10)
-                    .background(DonghuaFlixTheme.accentGradient)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                }
-                .padding(16)
-            }
-            .frame(height: heroBannerHeight)
-            .clipShape(RoundedRectangle(cornerRadius: 0))
-        }
-        .buttonStyle(.plain)
-    }
-
-    private var heroBannerHeight: CGFloat {
-        #if os(macOS)
-        return 400
-        #else
-        return UIDevice.current.userInterfaceIdiom == .pad ? 400 : 300
-        #endif
     }
 
     // MARK: - Section Header
