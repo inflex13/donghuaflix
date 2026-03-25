@@ -31,6 +31,32 @@
 		ED9CD6DAAC3585706057166B /* CrashLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B49F7CB85A97291DFE40684 /* CrashLogger.swift */; };
 		EDE186492CF590A2DB24B671 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714544123DC2F39931328A16 /* Router.swift */; };
 		F3D3C12F63B489400202CC88 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5963281E3EB0863D4F98A4B1 /* ContentView.swift */; };
+		AA0001011000000100000001 /* ShowCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0001010000000100000001 /* ShowCardView.swift */; };
+		AA0001021000000200000002 /* ShowCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0001010000000100000001 /* ShowCardView.swift */; };
+		AA0002011000000100000003 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0002010000000100000003 /* HomeViewModel.swift */; };
+		AA0002021000000200000004 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0002010000000100000003 /* HomeViewModel.swift */; };
+		AA0003011000000100000005 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0003010000000100000005 /* HomeView.swift */; };
+		AA0003021000000200000006 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0003010000000100000005 /* HomeView.swift */; };
+		AA0004011000000100000007 /* DetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0004010000000100000007 /* DetailViewModel.swift */; };
+		AA0004021000000200000008 /* DetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0004010000000100000007 /* DetailViewModel.swift */; };
+		AA0005011000000100000009 /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0005010000000100000009 /* DetailView.swift */; };
+		AA0005021000000200000010 /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0005010000000100000009 /* DetailView.swift */; };
+		AA0006011000000100000011 /* PlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0006010000000100000011 /* PlayerViewModel.swift */; };
+		AA0006021000000200000012 /* PlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0006010000000100000011 /* PlayerViewModel.swift */; };
+		AA0007011000000100000013 /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0007010000000100000013 /* PlayerView.swift */; };
+		AA0007021000000200000014 /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0007010000000100000013 /* PlayerView.swift */; };
+		AA0008011000000100000015 /* BrowseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0008010000000100000015 /* BrowseViewModel.swift */; };
+		AA0008021000000200000016 /* BrowseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0008010000000100000015 /* BrowseViewModel.swift */; };
+		AA0009011000000100000017 /* BrowseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0009010000000100000017 /* BrowseView.swift */; };
+		AA0009021000000200000018 /* BrowseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0009010000000100000017 /* BrowseView.swift */; };
+		AA0010011000000100000019 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0010010000000100000019 /* SearchViewModel.swift */; };
+		AA0010021000000200000020 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0010010000000100000019 /* SearchViewModel.swift */; };
+		AA0011011000000100000021 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0011010000000100000021 /* SearchView.swift */; };
+		AA0011021000000200000022 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0011010000000100000021 /* SearchView.swift */; };
+		AA0012011000000100000023 /* WatchlistViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0012010000000100000023 /* WatchlistViewModel.swift */; };
+		AA0012021000000200000024 /* WatchlistViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0012010000000100000023 /* WatchlistViewModel.swift */; };
+		AA0013011000000100000025 /* WatchlistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0013010000000100000025 /* WatchlistView.swift */; };
+		AA0013021000000200000026 /* WatchlistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0013010000000100000025 /* WatchlistView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,6 +74,19 @@
 		9C042C86150ED9594A78E20D /* SubtitleParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitleParser.swift; sourceTree = "<group>"; };
 		AE9ABD0DB708E9659170249D /* DTOs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DTOs.swift; sourceTree = "<group>"; };
 		FDCFF57FA1A3C2084694218C /* DonghuaFlix-iOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = "DonghuaFlix-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA0001010000000100000001 /* ShowCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowCardView.swift; sourceTree = "<group>"; };
+		AA0002010000000100000003 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		AA0003010000000100000005 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		AA0004010000000100000007 /* DetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewModel.swift; sourceTree = "<group>"; };
+		AA0005010000000100000009 /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
+		AA0006010000000100000011 /* PlayerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewModel.swift; sourceTree = "<group>"; };
+		AA0007010000000100000013 /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
+		AA0008010000000100000015 /* BrowseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowseViewModel.swift; sourceTree = "<group>"; };
+		AA0009010000000100000017 /* BrowseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowseView.swift; sourceTree = "<group>"; };
+		AA0010010000000100000019 /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
+		AA0011010000000100000021 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
+		AA0012010000000100000023 /* WatchlistViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistViewModel.swift; sourceTree = "<group>"; };
+		AA0013010000000100000025 /* WatchlistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -147,8 +186,77 @@
 		FAA0A050CEC6EA0C013EF8C0 /* Features */ = {
 			isa = PBXGroup;
 			children = (
+				AA00F0010000000100000001 /* Components */,
+				AA00F0020000000200000002 /* Home */,
+				AA00F0030000000300000003 /* Detail */,
+				AA00F0040000000400000004 /* Player */,
+				AA00F0050000000500000005 /* Browse */,
+				AA00F0060000000600000006 /* Search */,
+				AA00F0070000000700000007 /* Watchlist */,
 			);
 			path = Features;
+			sourceTree = "<group>";
+		};
+		AA00F0010000000100000001 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				AA0001010000000100000001 /* ShowCardView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		AA00F0020000000200000002 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				AA0002010000000100000003 /* HomeViewModel.swift */,
+				AA0003010000000100000005 /* HomeView.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		AA00F0030000000300000003 /* Detail */ = {
+			isa = PBXGroup;
+			children = (
+				AA0004010000000100000007 /* DetailViewModel.swift */,
+				AA0005010000000100000009 /* DetailView.swift */,
+			);
+			path = Detail;
+			sourceTree = "<group>";
+		};
+		AA00F0040000000400000004 /* Player */ = {
+			isa = PBXGroup;
+			children = (
+				AA0006010000000100000011 /* PlayerViewModel.swift */,
+				AA0007010000000100000013 /* PlayerView.swift */,
+			);
+			path = Player;
+			sourceTree = "<group>";
+		};
+		AA00F0050000000500000005 /* Browse */ = {
+			isa = PBXGroup;
+			children = (
+				AA0008010000000100000015 /* BrowseViewModel.swift */,
+				AA0009010000000100000017 /* BrowseView.swift */,
+			);
+			path = Browse;
+			sourceTree = "<group>";
+		};
+		AA00F0060000000600000006 /* Search */ = {
+			isa = PBXGroup;
+			children = (
+				AA0010010000000100000019 /* SearchViewModel.swift */,
+				AA0011010000000100000021 /* SearchView.swift */,
+			);
+			path = Search;
+			sourceTree = "<group>";
+		};
+		AA00F0070000000700000007 /* Watchlist */ = {
+			isa = PBXGroup;
+			children = (
+				AA0012010000000100000023 /* WatchlistViewModel.swift */,
+				AA0013010000000100000025 /* WatchlistView.swift */,
+			);
+			path = Watchlist;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -242,6 +350,19 @@
 				A5BA4A344AF3C7B4424C8ED0 /* ShowRepository.swift in Sources */,
 				3E4B87B86BA5C98DB65BD205 /* SubtitleParser.swift in Sources */,
 				D1DED0B380F57392F35D0A6E /* WatchRepository.swift in Sources */,
+				AA0001011000000100000001 /* ShowCardView.swift in Sources */,
+				AA0002011000000100000003 /* HomeViewModel.swift in Sources */,
+				AA0003011000000100000005 /* HomeView.swift in Sources */,
+				AA0004011000000100000007 /* DetailViewModel.swift in Sources */,
+				AA0005011000000100000009 /* DetailView.swift in Sources */,
+				AA0006011000000100000011 /* PlayerViewModel.swift in Sources */,
+				AA0007011000000100000013 /* PlayerView.swift in Sources */,
+				AA0008011000000100000015 /* BrowseViewModel.swift in Sources */,
+				AA0009011000000100000017 /* BrowseView.swift in Sources */,
+				AA0010011000000100000019 /* SearchViewModel.swift in Sources */,
+				AA0011011000000100000021 /* SearchView.swift in Sources */,
+				AA0012011000000100000023 /* WatchlistViewModel.swift in Sources */,
+				AA0013011000000100000025 /* WatchlistView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -261,6 +382,19 @@
 				BBB442A217629C0841E1E7D4 /* ShowRepository.swift in Sources */,
 				B5B1F823B1B08580FFC7CAB1 /* SubtitleParser.swift in Sources */,
 				82D37808158B8096A14DF7B8 /* WatchRepository.swift in Sources */,
+				AA0001021000000200000002 /* ShowCardView.swift in Sources */,
+				AA0002021000000200000004 /* HomeViewModel.swift in Sources */,
+				AA0003021000000200000006 /* HomeView.swift in Sources */,
+				AA0004021000000200000008 /* DetailViewModel.swift in Sources */,
+				AA0005021000000200000010 /* DetailView.swift in Sources */,
+				AA0006021000000200000012 /* PlayerViewModel.swift in Sources */,
+				AA0007021000000200000014 /* PlayerView.swift in Sources */,
+				AA0008021000000200000016 /* BrowseViewModel.swift in Sources */,
+				AA0009021000000200000018 /* BrowseView.swift in Sources */,
+				AA0010021000000200000020 /* SearchViewModel.swift in Sources */,
+				AA0011021000000200000022 /* SearchView.swift in Sources */,
+				AA0012021000000200000024 /* WatchlistViewModel.swift in Sources */,
+				AA0013021000000200000026 /* WatchlistView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

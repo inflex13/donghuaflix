@@ -73,13 +73,13 @@ struct ContentView: View {
     private func tabContent(for tab: AppTab) -> some View {
         switch tab {
         case .home:
-            HomeTabPlaceholder()
+            HomeView()
         case .browse:
-            BrowseTabPlaceholder()
+            BrowseView()
         case .search:
-            SearchTabPlaceholder()
+            SearchView()
         case .myList:
-            MyListTabPlaceholder()
+            WatchlistView()
         }
     }
 
@@ -89,17 +89,17 @@ struct ContentView: View {
     private func destinationView(for route: AppRoute) -> some View {
         switch route {
         case .home:
-            HomeTabPlaceholder()
+            HomeView()
         case .detail(let showId, let resumeEpisode):
-            DetailPlaceholder(showId: showId, resumeEpisode: resumeEpisode)
+            DetailView(showId: showId, resumeEpisode: resumeEpisode)
         case .player(let showId, let episodeNumber, let website):
-            PlayerPlaceholder(showId: showId, episodeNumber: episodeNumber, website: website)
+            PlayerView(showId: showId, episodeNumber: episodeNumber, website: website)
         case .browse(let genre):
-            BrowseTabPlaceholder(genre: genre)
+            BrowseView(genre: genre)
         case .search:
-            SearchTabPlaceholder()
+            SearchView()
         case .watchlist:
-            MyListTabPlaceholder()
+            WatchlistView()
         }
     }
 
@@ -121,136 +121,11 @@ struct ContentView: View {
     }
 }
 
-// MARK: - Placeholder Views (to be replaced by actual feature views)
-
-struct HomeTabPlaceholder: View {
-    var body: some View {
-        ZStack {
-            DonghuaFlixTheme.backgroundGradient.ignoresSafeArea()
-            VStack(spacing: 12) {
-                Image(systemName: "house.fill")
-                    .font(.system(size: 48))
-                    .foregroundStyle(DonghuaFlixTheme.accentPurple)
-                Text("Home")
-                    .font(.title.bold())
-                    .foregroundStyle(DonghuaFlixTheme.textPrimary)
-                Text("Coming soon")
-                    .foregroundStyle(DonghuaFlixTheme.textSecondary)
-            }
-        }
-        .navigationTitle("Home")
-    }
-}
-
-struct BrowseTabPlaceholder: View {
-    var genre: String? = nil
-
-    var body: some View {
-        ZStack {
-            DonghuaFlixTheme.backgroundGradient.ignoresSafeArea()
-            VStack(spacing: 12) {
-                Image(systemName: "square.grid.2x2.fill")
-                    .font(.system(size: 48))
-                    .foregroundStyle(DonghuaFlixTheme.accentFuchsia)
-                Text(genre ?? "Browse")
-                    .font(.title.bold())
-                    .foregroundStyle(DonghuaFlixTheme.textPrimary)
-                Text("Coming soon")
-                    .foregroundStyle(DonghuaFlixTheme.textSecondary)
-            }
-        }
-        .navigationTitle(genre ?? "Browse")
-    }
-}
-
-struct SearchTabPlaceholder: View {
-    var body: some View {
-        ZStack {
-            DonghuaFlixTheme.backgroundGradient.ignoresSafeArea()
-            VStack(spacing: 12) {
-                Image(systemName: "magnifyingglass")
-                    .font(.system(size: 48))
-                    .foregroundStyle(DonghuaFlixTheme.accentGold)
-                Text("Search")
-                    .font(.title.bold())
-                    .foregroundStyle(DonghuaFlixTheme.textPrimary)
-                Text("Coming soon")
-                    .foregroundStyle(DonghuaFlixTheme.textSecondary)
-            }
-        }
-        .navigationTitle("Search")
-    }
-}
-
-struct MyListTabPlaceholder: View {
-    var body: some View {
-        ZStack {
-            DonghuaFlixTheme.backgroundGradient.ignoresSafeArea()
-            VStack(spacing: 12) {
-                Image(systemName: "heart.fill")
-                    .font(.system(size: 48))
-                    .foregroundStyle(DonghuaFlixTheme.accentPink)
-                Text("My List")
-                    .font(.title.bold())
-                    .foregroundStyle(DonghuaFlixTheme.textPrimary)
-                Text("Coming soon")
-                    .foregroundStyle(DonghuaFlixTheme.textSecondary)
-            }
-        }
-        .navigationTitle("My List")
-    }
-}
-
-struct DetailPlaceholder: View {
-    let showId: Int
-    let resumeEpisode: Int?
-
-    var body: some View {
-        ZStack {
-            DonghuaFlixTheme.backgroundGradient.ignoresSafeArea()
-            VStack(spacing: 12) {
-                Text("Show #\(showId)")
-                    .font(.title.bold())
-                    .foregroundStyle(DonghuaFlixTheme.textPrimary)
-                if let ep = resumeEpisode {
-                    Text("Resume from Episode \(ep)")
-                        .foregroundStyle(DonghuaFlixTheme.textSecondary)
-                }
-            }
-        }
-        .navigationTitle("Detail")
-    }
-}
-
-struct PlayerPlaceholder: View {
-    let showId: Int
-    let episodeNumber: Int
-    let website: String?
-
-    var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
-            VStack(spacing: 12) {
-                Image(systemName: "play.circle.fill")
-                    .font(.system(size: 64))
-                    .foregroundStyle(DonghuaFlixTheme.accentFuchsia)
-                Text("Player - Show #\(showId) Ep \(episodeNumber)")
-                    .font(.title2.bold())
-                    .foregroundStyle(DonghuaFlixTheme.textPrimary)
-                if let website {
-                    Text("Source: \(website)")
-                        .foregroundStyle(DonghuaFlixTheme.textSecondary)
-                }
-            }
-        }
-        #if os(iOS)
-        .navigationBarHidden(true)
-        #endif
-    }
-}
-
 #Preview {
+    let apiClient = APIClient()
     ContentView()
         .environment(Router())
-        .environment(APIClient())
+        .environment(apiClient)
+        .environment(ShowRepository(apiClient: apiClient))
+        .environment(WatchRepository(apiClient: apiClient))
 }
