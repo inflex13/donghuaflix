@@ -43,6 +43,17 @@ struct HomeView: View {
         .refreshable {
             await viewModel?.fullResync()
         }
+        .toolbar {
+            ToolbarItem(placement: .automatic) {
+                Button {
+                    Task { await viewModel?.fullResync() }
+                } label: {
+                    Label("Sync", systemImage: "arrow.triangle.2.circlepath")
+                }
+                .tint(DonghuaFlixTheme.accentFuchsia)
+                .disabled(viewModel?.isLoading == true)
+            }
+        }
     }
 
     // MARK: - Content
