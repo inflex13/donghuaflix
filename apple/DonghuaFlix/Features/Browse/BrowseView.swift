@@ -60,7 +60,10 @@ struct BrowseView: View {
     @ViewBuilder
     private func contentView(vm: BrowseViewModel) -> some View {
         ScrollView(.vertical, showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: 12) {
+                // Website filter chips
+                websiteFilter(vm: vm)
+
                 // Genre filter chips
                 if !vm.genres.isEmpty {
                     genreFilter(vm: vm)
@@ -93,6 +96,25 @@ struct BrowseView: View {
                 Spacer(minLength: 80)
             }
         }
+    }
+
+    // MARK: - Website Filter
+
+    @ViewBuilder
+    private func websiteFilter(vm: BrowseViewModel) -> some View {
+        HStack(spacing: 8) {
+            filterChip(title: "All Sites", isSelected: vm.selectedWebsite == nil) {
+                Task { await vm.selectWebsite(nil) }
+            }
+            filterChip(title: "DonghuaFun", isSelected: vm.selectedWebsite == "donghuafun") {
+                Task { await vm.selectWebsite("donghuafun") }
+            }
+            filterChip(title: "AnimeKhor", isSelected: vm.selectedWebsite == "animekhor") {
+                Task { await vm.selectWebsite("animekhor") }
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 8)
     }
 
     // MARK: - Genre Filter
