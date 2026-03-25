@@ -38,10 +38,31 @@ struct PlayerView: View {
                 loadingView
             }
         }
+        .ignoresSafeArea()
         #if os(iOS)
         .navigationBarHidden(true)
         .statusBarHidden(viewModel?.showControls == false)
-        .ignoresSafeArea()
+        .persistentSystemOverlays(.hidden)
+        #endif
+        #if os(macOS)
+        .onAppear {
+            // Enter native macOS fullscreen
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                if let window = NSApplication.shared.keyWindow {
+                    if !window.styleMask.contains(.fullScreen) {
+                        window.toggleFullScreen(nil)
+                    }
+                }
+            }
+        }
+        .onDisappear {
+            // Exit fullscreen when leaving player
+            if let window = NSApplication.shared.keyWindow {
+                if window.styleMask.contains(.fullScreen) {
+                    window.toggleFullScreen(nil)
+                }
+            }
+        }
         #endif
         .task {
             if viewModel == nil {
