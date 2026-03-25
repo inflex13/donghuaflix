@@ -88,17 +88,31 @@ final class PlayerViewModel {
             // Update nav state
             updateNavState()
 
-            // Fetch sources
-            sources = try await showRepository.getEpisodeSources(episodeId: episode.id)
+            // Fetch sources — only keep Dailymotion (4K) for DonghuaFun, all for others
+            let fetchedSources = try await showRepository.getEpisodeSources(episodeId: episode.id)
+            sources = fetchedSources
+                .filter { src in
+                    // Skip 1080eng/1080indo embed sources — Dailymotion is 4K
+                    let name = src.sourceName.lowercased()
+                    if name.contains("1080") { return false }
+                    return true
+                }
+                .sorted { a, b in
+                    let aPriority = a.sourceName.lowercased().contains("dailymotion") ? 3 :
+                                    a.sourceName.lowercased().contains("4k") ? 2 : 0
+                    let bPriority = b.sourceName.lowercased().contains("dailymotion") ? 3 :
+                                    b.sourceName.lowercased().contains("4k") ? 2 : 0
+                    return aPriority > bPriority
+                }
 
-            guard let firstSource = sources.first else {
+            guard let bestSource = sources.first else {
                 error = "No sources available"
                 isLoading = false
                 return
             }
 
-            // Resolve and select first source
-            await selectSource(firstSource)
+            // Resolve and select best source
+            await selectSource(bestSource)
 
             // Get resume position from watch history
             let history = try await watchRepository.getWatchedEpisodesForShow(showId: showId)
