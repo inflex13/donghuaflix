@@ -45,22 +45,11 @@ struct PlayerView: View {
         .persistentSystemOverlays(.hidden)
         #endif
         #if os(macOS)
-        .onAppear {
-            // Enter native macOS fullscreen
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                if let window = NSApplication.shared.keyWindow {
-                    if !window.styleMask.contains(.fullScreen) {
-                        window.toggleFullScreen(nil)
-                    }
-                }
-            }
-        }
         .onDisappear {
             // Exit fullscreen when leaving player
-            if let window = NSApplication.shared.keyWindow {
-                if window.styleMask.contains(.fullScreen) {
-                    window.toggleFullScreen(nil)
-                }
+            if let window = NSApplication.shared.keyWindow,
+               window.styleMask.contains(.fullScreen) {
+                window.toggleFullScreen(nil)
             }
         }
         #endif
@@ -348,6 +337,20 @@ struct PlayerView: View {
                     }
                     .buttonStyle(.plain)
                 }
+
+                // Fullscreen toggle
+                #if os(macOS)
+                Button {
+                    if let window = NSApplication.shared.keyWindow {
+                        window.toggleFullScreen(nil)
+                    }
+                } label: {
+                    Image(systemName: "arrow.up.left.and.arrow.down.right")
+                        .font(.subheadline)
+                        .foregroundStyle(.white)
+                }
+                .buttonStyle(.plain)
+                #endif
 
                 // Autoplay toggle
                 Button {
