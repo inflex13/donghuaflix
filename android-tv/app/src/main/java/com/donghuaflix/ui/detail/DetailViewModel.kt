@@ -31,6 +31,8 @@ data class DetailUiState(
     val isInWatchlist: Boolean = false,
     val isLoading: Boolean = true,
     val watchedEpisodes: Map<Int, EpisodeWatchInfo> = emptyMap(),
+    val preloadingEpisodes: Set<Int> = emptySet(),  // episode IDs currently preloading
+    val preloadedEpisodes: Set<Int> = emptySet(),   // episode IDs with sources ready
 )
 
 @HiltViewModel
@@ -155,6 +157,35 @@ class DetailViewModel @Inject constructor(
         viewModelScope.launch {
             watchRepository.toggleWatchlist(showId)
             _uiState.update { it.copy(isInWatchlist = !it.isInWatchlist) }
+        }
+    }
+
+    fun preloadSources(episode: Episode) {
+        if (episode.hasSources) return
+        if (_uiState.value.preloadingEpisodes.contains(episode.id)) return
+        if (_uiState.value.preloadedEpisodes.contains(episode.id)) return
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(preloadingEpisodes = it.preloadingEpisodes + episode.id) }
+            try {
+                val sources = showRepository.getEpisodeSources(episode.id)
+                if (sources.isNotEmpty()) {
+                    // Update episode in list to show it now has sources
+                    _uiState.update { state ->
+                        state.copy(
+                            preloadingEpisodes = state.preloadingEpisodes - episode.id,
+                            preloadedEpisodes = state.preloadedEpisodes + episode.id,
+                            episodes = state.episodes.map {
+                                if (it.id == episode.id) it.copy(hasSources = true) else it
+                            },
+                        )
+                    }
+                } else {
+                    _uiState.update { it.copy(preloadingEpisodes = it.preloadingEpisodes - episode.id) }
+                }
+            } catch (_: Exception) {
+                _uiState.update { it.copy(preloadingEpisodes = it.preloadingEpisodes - episode.id) }
+            }
         }
     }
 }

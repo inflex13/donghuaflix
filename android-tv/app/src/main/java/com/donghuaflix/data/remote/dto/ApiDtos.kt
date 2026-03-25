@@ -41,6 +41,8 @@ data class EpisodeDto(
     val title: String? = null,
     @SerializedName("external_url") val externalUrl: String? = null,
     @SerializedName("website_name") val websiteName: String? = null,
+    @SerializedName("has_sources") val hasSources: Boolean = true,
+    @SerializedName("created_at") val createdAt: String? = null,
 )
 
 data class SubtitleDto(

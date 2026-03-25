@@ -82,7 +82,7 @@ class ShowRepository @Inject constructor(
     suspend fun getEpisodes(showId: Int, website: String? = null): List<Episode> {
         return try {
             api.getShowEpisodes(showId, website).map {
-                Episode(it.id, it.episodeNumber, it.title, it.externalUrl, it.websiteName)
+                Episode(it.id, it.episodeNumber, it.title, it.externalUrl, it.websiteName, it.hasSources, it.createdAt)
             }
         } catch (e: Exception) {
             emptyList()

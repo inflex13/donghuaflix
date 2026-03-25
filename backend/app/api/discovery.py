@@ -136,6 +136,20 @@ async def get_show_episodes(
     ws_result = await db.execute(ws_query)
     ws_map = {ws.id: ws.website.name for ws in ws_result.scalars().all()}
 
+    # Check which episodes have sources
+    from app.models import Source
+    from sqlalchemy import func as sqlfunc
+    ep_ids = [ep.id for ep in episodes]
+    if ep_ids:
+        source_counts = await db.execute(
+            select(Source.episode_id, sqlfunc.count(Source.id))
+            .where(Source.episode_id.in_(ep_ids))
+            .group_by(Source.episode_id)
+        )
+        source_map = dict(source_counts.all())
+    else:
+        source_map = {}
+
     return [
         EpisodeResponse(
             id=ep.id,
@@ -143,6 +157,8 @@ async def get_show_episodes(
             title=ep.title,
             external_url=ep.external_url,
             website_name=ws_map.get(ep.website_show_id),
+            has_sources=(source_map.get(ep.id, 0) > 0),
+            created_at=ep.created_at.isoformat() if ep.created_at else None,
         )
         for ep in episodes
     ]

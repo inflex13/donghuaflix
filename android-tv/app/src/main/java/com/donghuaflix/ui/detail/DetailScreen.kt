@@ -125,6 +125,29 @@ fun DetailScreen(
                 contentScale = ContentScale.Crop,
             )
 
+            // Episode sort & range state (must be outside LazyColumn scope)
+            var latestFirst by remember { mutableStateOf(true) }
+            val epRangeSize = 50
+            val sortedEpisodes = if (latestFirst) uiState.episodes.sortedByDescending { it.episodeNumber }
+                else uiState.episodes.sortedBy { it.episodeNumber }
+            val epRanges = if (sortedEpisodes.size > epRangeSize) {
+                sortedEpisodes
+                    .map { it.episodeNumber }
+                    .chunked(epRangeSize)
+                    .map { chunk -> chunk.last()..chunk.first() }  // last..first since descending
+            } else emptyList()
+
+            var selectedEpRange by remember(epRanges, effectiveResumeEp) {
+                val initial = epRanges.indexOfFirst { effectiveResumeEp in it }
+                mutableStateOf(if (initial >= 0) initial else 0)
+            }
+
+            val displayEpisodes = if (epRanges.isNotEmpty()) {
+                val currentRange = epRanges.getOrNull(selectedEpRange)
+                if (currentRange != null) sortedEpisodes.filter { it.episodeNumber in currentRange }
+                else sortedEpisodes
+            } else sortedEpisodes
+
             // Right: Scrollable info + episodes
             LazyColumn(
                 modifier = Modifier
@@ -390,102 +413,303 @@ fun DetailScreen(
                                     color = if (mwFocused) AccentFuchsia else TextMuted,
                                 )
                             }
+
+                            Spacer(modifier = Modifier.width(6.dp))
+
+                            // Sort order toggle
+                            var sortFocused by remember { mutableStateOf(false) }
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(6.dp))
+                                    .border(
+                                        if (sortFocused) 2.dp else 0.dp,
+                                        if (sortFocused) AccentFuchsia else Color.Transparent,
+                                        RoundedCornerShape(6.dp),
+                                    )
+                                    .background(if (sortFocused) AccentFuchsia.copy(alpha = 0.15f) else SurfaceCard)
+                                    .onFocusChanged { sortFocused = it.isFocused }
+                                    .clickable { latestFirst = !latestFirst }
+                                    .padding(horizontal = 12.dp, vertical = 6.dp),
+                            ) {
+                                androidx.compose.material3.Text(
+                                    if (latestFirst) "↓ Latest" else "↑ Oldest",
+                                    fontSize = 11.sp,
+                                    color = if (sortFocused) AccentFuchsia else TextMuted,
+                                )
+                            }
                         }
                     }
                 }
 
-                // Episode grid (inline in LazyColumn)
-                item {
-                    // Use a fixed-height box for the grid inside LazyColumn
-                    val rowCount = (uiState.episodes.size + 5) / 6  // 6 columns
-                    val gridHeight = (rowCount * 48).coerceAtMost(400).dp
-
-                    LazyVerticalGrid(
-                        columns = GridCells.Adaptive(minSize = 60.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.height(gridHeight),
-                    ) {
-                        items(uiState.episodes) { episode ->
-                            val isCurrentEp = effectiveResumeEp == episode.episodeNumber
-                            val watchInfo = uiState.watchedEpisodes[episode.episodeNumber]
-                            val isWatched = watchInfo?.completed == true
-                            val isInProgress = watchInfo != null && !watchInfo.completed
-                            var epFocused by remember { mutableStateOf(false) }
-
-                            Box(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .border(
-                                        width = if (epFocused) 3.dp else 0.dp,
-                                        color = if (epFocused) AccentFuchsia else Color.Transparent,
-                                        shape = RoundedCornerShape(8.dp),
-                                    )
-                                    .background(
-                                        when {
-                                            epFocused -> AccentFuchsia.copy(alpha = 0.2f)
-                                            isCurrentEp -> AccentPurple.copy(alpha = 0.3f)
-                                            isWatched -> Color(0xFF4CAF50).copy(alpha = 0.15f)
-                                            else -> SurfaceCard
-                                        }
-                                    )
-                                    .onFocusChanged { epFocused = it.isFocused }
-                                    .clickable { onPlayEpisode(episode.episodeNumber, uiState.selectedWebsite?.name) },
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                Column(
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                ) {
-                                    // Episode number + watched indicator
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                                    ) {
-                                        if (isWatched) {
-                                            androidx.compose.material3.Text(
-                                                text = "✓",
-                                                fontSize = 10.sp,
-                                                color = Color(0xFF4CAF50),
-                                            )
-                                        }
-                                        androidx.compose.material3.Text(
-                                            text = "${episode.episodeNumber}",
-                                            fontSize = 13.sp,
-                                            color = when {
-                                                epFocused -> AccentFuchsia
-                                                isCurrentEp -> AccentPurple
-                                                isWatched -> Color(0xFF4CAF50)
-                                                else -> TextSecondary
-                                            },
-                                            fontWeight = if (isCurrentEp || epFocused) FontWeight.Bold else FontWeight.Normal,
+                // Episode range selector (only if > 50 episodes)
+                if (epRanges.isNotEmpty()) {
+                    item {
+                        LazyRow(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            contentPadding = PaddingValues(horizontal = 20.dp),
+                            modifier = Modifier.padding(bottom = 10.dp),
+                        ) {
+                            items(epRanges.size) { idx ->
+                                val range = epRanges[idx]
+                                val isSelected = idx == selectedEpRange
+                                var chipFocused by remember { mutableStateOf(false) }
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(20.dp))
+                                        .border(
+                                            if (chipFocused) 2.dp else 0.dp,
+                                            if (chipFocused) AccentFuchsia else Color.Transparent,
+                                            RoundedCornerShape(20.dp),
                                         )
-                                    }
-
-                                    // Progress bar for in-progress episodes
-                                    if (isInProgress && watchInfo != null) {
-                                        Spacer(modifier = Modifier.height(3.dp))
-                                        Box(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .height(2.dp)
-                                                .background(Color.White.copy(alpha = 0.1f), RoundedCornerShape(1.dp)),
-                                        ) {
-                                            Box(
-                                                modifier = Modifier
-                                                    .fillMaxHeight()
-                                                    .fillMaxWidth(watchInfo.progressFraction)
-                                                    .background(AccentFuchsia, RoundedCornerShape(1.dp)),
-                                            )
-                                        }
-                                    }
+                                        .background(
+                                            if (isSelected) Brush.horizontalGradient(listOf(AccentPurple, AccentFuchsia))
+                                            else if (chipFocused) Brush.horizontalGradient(listOf(AccentFuchsia.copy(alpha = 0.15f), AccentFuchsia.copy(alpha = 0.15f)))
+                                            else Brush.horizontalGradient(listOf(SurfaceCard, SurfaceCard))
+                                        )
+                                        .onFocusChanged { chipFocused = it.isFocused }
+                                        .clickable { selectedEpRange = idx }
+                                        .padding(horizontal = 16.dp, vertical = 7.dp),
+                                ) {
+                                    androidx.compose.material3.Text(
+                                        text = "${idx + 1}",
+                                        fontSize = 14.sp,
+                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                        color = if (isSelected) Color.White else if (chipFocused) AccentFuchsia else TextSecondary,
+                                    )
                                 }
                             }
                         }
                     }
                 }
+
+                // Episode list — Netflix-style vertical rows
+                items(displayEpisodes) { episode ->
+                    val isCurrentEp = effectiveResumeEp == episode.episodeNumber
+                    val watchInfo = uiState.watchedEpisodes[episode.episodeNumber]
+                    val isWatched = watchInfo?.completed == true
+                    val isInProgress = watchInfo != null && !watchInfo.completed
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(52.dp)
+                            .padding(horizontal = 20.dp, vertical = 3.dp),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    ) {
+                        // Main episode row — plays the episode
+                        var epFocused by remember { mutableStateOf(false) }
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .clip(RoundedCornerShape(10.dp))
+                                .border(
+                                    width = if (epFocused) 2.dp else 0.dp,
+                                    color = if (epFocused) AccentFuchsia else Color.Transparent,
+                                    shape = RoundedCornerShape(10.dp),
+                                )
+                                .background(
+                                    when {
+                                        epFocused -> AccentFuchsia.copy(alpha = 0.15f)
+                                        isCurrentEp -> AccentPurple.copy(alpha = 0.2f)
+                                        else -> SurfaceCard
+                                    }
+                                )
+                                .onFocusChanged { epFocused = it.isFocused }
+                                .clickable { onPlayEpisode(episode.episodeNumber, uiState.selectedWebsite?.name) }
+                                .padding(horizontal = 16.dp, vertical = 12.dp),
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                // Episode number badge
+                                Box(
+                                    modifier = Modifier
+                                        .size(36.dp)
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(
+                                            when {
+                                                isCurrentEp -> AccentPurple.copy(alpha = 0.4f)
+                                                isWatched -> Color(0xFF4CAF50).copy(alpha = 0.2f)
+                                                else -> Color.White.copy(alpha = 0.06f)
+                                            }
+                                        ),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    androidx.compose.material3.Text(
+                                        text = "${episode.episodeNumber}",
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = when {
+                                            epFocused -> AccentFuchsia
+                                            isCurrentEp -> AccentPurple
+                                            isWatched -> Color(0xFF4CAF50)
+                                            else -> TextSecondary
+                                        },
+                                    )
+                                }
+
+                                Spacer(modifier = Modifier.width(14.dp))
+
+                                // Episode info — single line
+                                Row(
+                                    modifier = Modifier.weight(1f),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                ) {
+                                    androidx.compose.material3.Text(
+                                        text = "Episode ${episode.episodeNumber}",
+                                        fontSize = 14.sp,
+                                        fontWeight = if (isCurrentEp || epFocused) FontWeight.SemiBold else FontWeight.Normal,
+                                        maxLines = 1,
+                                        color = when {
+                                            epFocused -> Color.White
+                                            isCurrentEp -> TextPrimary
+                                            !episode.hasSources -> TextMuted
+                                            else -> TextSecondary
+                                        },
+                                    )
+
+                                    // Progress indicator
+                                    if (isInProgress && watchInfo != null) {
+                                        Box(
+                                            modifier = Modifier
+                                                .width(40.dp)
+                                                .height(3.dp)
+                                                .clip(RoundedCornerShape(2.dp))
+                                                .background(Color.White.copy(alpha = 0.1f)),
+                                        ) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .fillMaxHeight()
+                                                    .fillMaxWidth(watchInfo.progressFraction)
+                                                    .background(AccentFuchsia, RoundedCornerShape(2.dp)),
+                                            )
+                                        }
+                                    }
+
+                                    Spacer(modifier = Modifier.weight(1f))
+
+                                    episode.createdAt?.let { dateStr ->
+                                        val formatted = formatEpisodeDate(dateStr)
+                                        if (formatted != null) {
+                                            androidx.compose.material3.Text(
+                                                text = formatted,
+                                                fontSize = 11.sp,
+                                                maxLines = 1,
+                                                color = TextMuted,
+                                            )
+                                        }
+                                    }
+                                }
+
+                                // Status indicator
+                                if (!episode.hasSources) {
+                                    androidx.compose.material3.Text("○", fontSize = 12.sp, color = TextMuted)
+                                } else if (isCurrentEp && !isWatched) {
+                                    androidx.compose.material3.Text("▶", fontSize = 12.sp, color = AccentPurple)
+                                }
+                            }
+                        }
+
+                        // Preload sources button (only for episodes without sources)
+                        if (!episode.hasSources) {
+                            val isPreloading = uiState.preloadingEpisodes.contains(episode.id)
+                            var preloadFocused by remember { mutableStateOf(false) }
+                            Box(
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .border(
+                                        if (preloadFocused) 2.dp else 0.dp,
+                                        if (preloadFocused) AccentFuchsia else Color.Transparent,
+                                        RoundedCornerShape(10.dp),
+                                    )
+                                    .background(
+                                        if (preloadFocused) AccentFuchsia.copy(alpha = 0.15f) else SurfaceCard
+                                    )
+                                    .onFocusChanged { preloadFocused = it.isFocused }
+                                    .clickable { if (!isPreloading) viewModel.preloadSources(episode) },
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                if (isPreloading) {
+                                    androidx.compose.material3.CircularProgressIndicator(
+                                        modifier = Modifier.size(18.dp),
+                                        color = AccentFuchsia,
+                                        strokeWidth = 2.dp,
+                                    )
+                                } else {
+                                    androidx.compose.material3.Text(
+                                        text = "↓",
+                                        fontSize = 20.sp,
+                                        color = if (preloadFocused) AccentFuchsia else TextMuted,
+                                    )
+                                }
+                            }
+                        }
+
+                        // Watched toggle button
+                        var watchBtnFocused by remember { mutableStateOf(false) }
+                        Box(
+                            modifier = Modifier
+                                .width(48.dp)
+                                .fillMaxHeight()
+                                .clip(RoundedCornerShape(10.dp))
+                                .border(
+                                    if (watchBtnFocused) 2.dp else 0.dp,
+                                    if (watchBtnFocused) AccentFuchsia else Color.Transparent,
+                                    RoundedCornerShape(10.dp),
+                                )
+                                .background(
+                                    when {
+                                        watchBtnFocused && isWatched -> Color(0xFF4CAF50).copy(alpha = 0.3f)
+                                        watchBtnFocused -> AccentFuchsia.copy(alpha = 0.15f)
+                                        isWatched -> Color(0xFF4CAF50).copy(alpha = 0.15f)
+                                        else -> SurfaceCard
+                                    }
+                                )
+                                .onFocusChanged { watchBtnFocused = it.isFocused }
+                                .clickable {
+                                    if (isWatched) {
+                                        viewModel.markEpisodeUnwatched(episode.episodeNumber)
+                                    } else {
+                                        viewModel.markEpisodeWatched(episode.episodeNumber)
+                                    }
+                                },
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            androidx.compose.material3.Text(
+                                text = if (isWatched) "✓" else "○",
+                                fontSize = 18.sp,
+                                color = when {
+                                    watchBtnFocused && isWatched -> Color(0xFF4CAF50)
+                                    watchBtnFocused -> AccentFuchsia
+                                    isWatched -> Color(0xFF4CAF50)
+                                    else -> TextMuted
+                                },
+                            )
+                        }
+                    }
+                }
             }
         }
+    }
+}
+
+@Composable
+private fun formatEpisodeDate(isoDate: String): String? {
+    return try {
+        val instant = java.time.Instant.parse(isoDate)
+        val zoned = instant.atZone(java.time.ZoneId.systemDefault())
+        val formatter = java.time.format.DateTimeFormatter.ofPattern("EEE MMM d yyyy", java.util.Locale.ENGLISH)
+        zoned.format(formatter)
+    } catch (_: Exception) {
+        try {
+            // Handle dates without timezone like "2026-03-24T12:00:00"
+            val local = java.time.LocalDateTime.parse(isoDate.substringBefore("."))
+            val formatter = java.time.format.DateTimeFormatter.ofPattern("EEE MMM d yyyy", java.util.Locale.ENGLISH)
+            local.format(formatter)
+        } catch (_: Exception) { null }
     }
 }
 

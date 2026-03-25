@@ -21,9 +21,12 @@ async def update_progress(req: WatchProgressRequest, db: AsyncSession = Depends(
     result = await db.execute(query)
     entry = result.scalar_one_or_none()
 
-    completed = False
-    if req.duration_seconds and req.progress_seconds >= req.duration_seconds * 0.9:
+    if req.completed is not None:
+        completed = req.completed
+    elif req.duration_seconds and req.progress_seconds >= req.duration_seconds * 0.9:
         completed = True
+    else:
+        completed = False
 
     if entry:
         entry.progress_seconds = req.progress_seconds

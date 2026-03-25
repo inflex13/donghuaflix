@@ -25,33 +25,89 @@ Personal Netflix-like Android TV app for watching Chinese animation (donghua). S
 ## Features
 
 ### Android TV App
-- Netflix-style home screen with Continue Watching, per-website rows, genre rows
-- Show detail with website selector, episode grid with watch history indicators
-- ExoPlayer with HLS/DASH/MP4, English subtitles (SRT from Dailymotion)
-- Subtitle controls: size (S/M/L), background toggle (30% black or transparent)
-- Multi-source video with D-pad controls (seek bar, play/pause, source switcher, subtitle size, subtitle BG, prev/next EP, autoplay)
-- Source auto-fallback (Rumble → ok.ru if source is removed)
-- Watch progress tracking with resume
-- Mark All Watched button
-- Watchlist with gradient glow indicator on cards
-- In-app update checker with modal dialog
-- Full resync button
-- Splash screen with custom donghua artwork
+
+**Home Screen**
+- Netflix-style horizontal scrolling rows (Continue Watching, per-website rows, genre rows)
+- Hero banner with poster art, genres, rating, year, episode count, "Watch Now" button
+- Splash screen with custom donghua artwork and branding
+- Top nav bar: Browse, Search, My List, Sync, Update, Exit
+
+**Show Detail Screen**
+- Cinematic layout with poster, metadata (rating, year, status, genres)
+- Website selector (DonghuaFun / AnimeKhor) when show exists on multiple sites
+- Episode grid with watch history indicators (checkmarks for watched, progress bars)
+- Resume button for continue watching
+- Mark All Watched / Mark as Unwatched per episode (immediately synced to server)
+- Watchlist toggle (+ My List)
+
+**Video Player**
+- ExoPlayer with HLS, DASH, MP4 support
+- SRT subtitles from Dailymotion (10 languages, English auto-selected)
+- Subtitle controls: CC On/Off, Size (S/M/L), Background toggle (30% black / transparent)
+- All subtitle settings persisted to device via SharedPreferences
+- D-pad controls: seek bar, play/pause, source switcher, subtitle controls, prev/next EP, autoplay toggle
+- Multi-source with auto-fallback (tries each source until one works)
+- Watch progress saved every 10 seconds + on pause/exit
+- Keep screen on during playback (prevents screensaver)
+- Resume from last position
+
+**Browse Screen**
+- Filter by website (All / DonghuaFun / AnimeKhor)
+- Filter by genre (scrolling genre chips)
+- Grid layout with show cards
+
+**Search**
+- Real-time search across all shows
+
+**Watchlist**
+- "My List" with all saved shows
+- Gradient glow indicator on cards across all screens
+
+**System**
+- In-app auto-updater (checks `/app/version`, downloads and installs APK)
+- Full resync button (wipes local + re-pulls from server)
+- Background sync via WorkManager every 2 hours
+- Every action pushes to server immediately (mark watched, progress, watchlist)
+- Crash logging — uncaught exceptions + player errors sent to server
 - Release signed APK served at `dl.donghuaflix.cloud`
 
+**Theme**
+- Dark cinematic theme (Obsidian background)
+- Purple/fuchsia gradient accents
+- Fuchsia focus borders for D-pad navigation
+- Custom show cards with poster images, rating badges, episode counts
+
 ### Backend
-- **FastAPI** REST API with async SQLAlchemy
-- **PostgreSQL** database with multi-website dedup
-- **Celery + Redis** for scheduled scraping (every 30 min)
-- **Playwright** for extracting video sources from AnimeKhor episode pages
-- **Caddy** reverse proxy with automatic SSL
-- **Two website scrapers**:
-  - **DonghuaFun** (MacCMS API) — 4K Dailymotion sources with subtitles
-  - **AnimeKhor** (WordPress) — ok.ru + RumblePlayer sources via Playwright
-- Title deduplication across websites with normalized matching
-- Image caching on VPS (JPEG conversion for TV compatibility)
-- Add-show-by-URL endpoint for manual additions
-- Incremental scraping with auto source extraction for new episodes
+
+**API (FastAPI)**
+- REST API with async SQLAlchemy + PostgreSQL
+- Show listing with filters (genre, status, website, search)
+- Episode listing per show per website
+- On-demand video URL resolution (Dailymotion, ok.ru, Rumble, embed)
+- SRT subtitle fetching from Dailymotion metadata API
+- Watch progress tracking + continue watching
+- Watchlist management
+- Delta sync endpoint
+- Home screen aggregate endpoint
+- Add-show-by-URL endpoint (paste a URL, auto-scrape)
+- App version endpoint for auto-updater
+- Crash log collection + stats endpoint
+- Image/poster caching on VPS (JPEG conversion for TV compatibility)
+
+**Scrapers**
+- Pluggable scraper architecture (`BaseScraper` + `@register_scraper` decorator)
+- **DonghuaFun** (MacCMS API) — 4K Dailymotion sources with SRT subtitles
+- **AnimeKhor** (WordPress + Playwright) — ok.ru + RumblePlayer sources
+- Title deduplication across websites (normalized matching)
+- Incremental scraping every 30 minutes (Celery Beat)
+- Full scrape on demand
+- Auto source extraction for new episodes
+
+**Video Source Resolution**
+- Dailymotion → HLS stream + SRT subtitles (cached with expiry)
+- ok.ru → HLS stream
+- Rumble → HLS/MP4
+- play.donghuafun.com embeds → Playwright network interception
 
 ## Tech Stack
 
@@ -63,6 +119,7 @@ Personal Netflix-like Android TV app for watching Chinese animation (donghua). S
 | DI | Hilt |
 | Image Loading | Coil (100MB disk cache) |
 | Background Sync | WorkManager |
+| Subtitle Prefs | SharedPreferences |
 | Backend API | Python, FastAPI, SQLAlchemy (async) |
 | Database | PostgreSQL 16 |
 | Task Queue | Celery + Redis |
@@ -77,6 +134,7 @@ Personal Netflix-like Android TV app for watching Chinese animation (donghua). S
 | API | `https://api.donghuaflix.cloud` |
 | APK Download | `https://dl.donghuaflix.cloud` |
 | Swagger Docs | `https://api.donghuaflix.cloud/docs` |
+| Crash Logs | `https://api.donghuaflix.cloud/api/crash-logs` |
 | Database | `31.220.104.18:5432` |
 
 ## Project Structure
@@ -91,8 +149,18 @@ Personal Netflix-like Android TV app for watching Chinese animation (donghua). S
 │   │   ├── config.py
 │   │   ├── database.py
 │   │   ├── models/             # SQLAlchemy models
+│   │   │   └── crash_log.py    # Crash/error log model
 │   │   ├── schemas/            # Pydantic schemas
-│   │   ├── api/                # REST endpoints
+│   │   ├── api/
+│   │   │   ├── shows.py        # Show CRUD
+│   │   │   ├── episodes.py     # Episode listing
+│   │   │   ├── sources.py      # Source resolution + subtitles
+│   │   │   ├── watch.py        # Watch progress
+│   │   │   ├── watchlist.py    # Watchlist
+│   │   │   ├── sync.py         # Delta sync
+│   │   │   ├── discovery.py    # Home, genres, websites
+│   │   │   ├── crash_logs.py   # Crash log collection
+│   │   │   └── assets.py       # Image serving
 │   │   ├── scraper/
 │   │   │   ├── base.py         # Abstract BaseScraper
 │   │   │   ├── donghuafun.py   # MacCMS API scraper
@@ -107,24 +175,27 @@ Personal Netflix-like Android TV app for watching Chinese animation (donghua). S
 ├── android-tv/
 │   ├── app/
 │   │   └── src/main/java/com/donghuaflix/
-│   │       ├── di/             # Hilt modules
+│   │       ├── DonghuaFlixApp.kt       # App class + crash handler
+│   │       ├── di/                     # Hilt modules
 │   │       ├── data/
-│   │       │   ├── local/      # Room DB, DAOs, entities
-│   │       │   ├── remote/     # Retrofit API, DTOs
-│   │       │   ├── repository/ # Offline-first repositories
+│   │       │   ├── local/              # Room DB, DAOs, entities
+│   │       │   │   └── SubtitlePreferences.kt  # Persisted subtitle settings
+│   │       │   ├── remote/             # Retrofit API, DTOs
+│   │       │   │   └── CrashLogger.kt  # Error logging singleton
+│   │       │   ├── repository/         # Repositories (push-first sync)
 │   │       │   └── mapper/
-│   │       ├── domain/model/   # Domain models
+│   │       ├── domain/model/           # Domain models
 │   │       ├── ui/
-│   │       │   ├── theme/      # Dark cinematic theme
-│   │       │   ├── navigation/ # Nav graph
-│   │       │   ├── home/       # Netflix-style home
-│   │       │   ├── detail/     # Show detail + episodes
-│   │       │   ├── player/     # ExoPlayer + D-pad controls
-│   │       │   ├── browse/     # Genre browser
+│   │       │   ├── theme/              # Dark cinematic theme
+│   │       │   ├── navigation/         # Nav graph
+│   │       │   ├── home/               # Netflix-style home
+│   │       │   ├── detail/             # Show detail + episodes
+│   │       │   ├── player/             # ExoPlayer + D-pad controls + subtitles
+│   │       │   ├── browse/             # Genre browser
 │   │       │   ├── search/
 │   │       │   ├── watchlist/
-│   │       │   └── components/ # ShowCard, etc.
-│   │       └── sync/           # AppUpdater, SyncWorker
+│   │       │   └── components/         # ShowCard, etc.
+│   │       └── sync/                   # AppUpdater, SyncWorker
 │
 ├── assets/                     # Brand assets, splash screens
 └── .env                        # Credentials (gitignored)
@@ -141,7 +212,7 @@ GET  /api/shows/{id}/episodes      — Episodes (filter by website)
 
 # Sources
 GET  /api/episodes/{id}/sources    — Stream providers for episode
-POST /api/sources/{id}/resolve     — Resolve video URL on-demand
+POST /api/sources/{id}/resolve     — Resolve video URL + subtitles on-demand
 
 # Watch Tracking
 POST /api/watch/progress           — Update watch progress
@@ -158,6 +229,11 @@ GET  /api/sync                     — Delta sync
 GET  /api/home                     — Home screen data
 GET  /api/genres                   — All genres
 GET  /api/websites                 — Registered websites
+
+# Crash Logs
+POST /api/crash-logs               — Submit crash/error log
+GET  /api/crash-logs               — List recent logs (filter by level)
+GET  /api/crash-logs/stats         — Count by level (last 24h)
 
 # Management
 POST /api/add-show?url=            — Scrape and add show by URL
@@ -205,6 +281,7 @@ curl -X POST "https://api.donghuaflix.cloud/api/add-show?url=https://animekhor.o
 - `sources` — Video stream providers per episode (ok.ru, Rumble, Dailymotion)
 - `watch_history` — Playback progress tracking
 - `watchlist` — User's "My List"
+- `crash_logs` — App error/crash logs with device info
 
 ## Video Source Priority
 

@@ -51,6 +51,8 @@ class EpisodeResponse(BaseModel):
     title: str | None = None
     external_url: str | None = None
     website_name: str | None = None
+    has_sources: bool = True
+    created_at: str | None = None
 
     class Config:
         from_attributes = True
@@ -74,6 +76,7 @@ class WatchProgressRequest(BaseModel):
     progress_seconds: int
     duration_seconds: int | None = None
     episode_id: int | None = None
+    completed: bool | None = None  # Explicit override — if set, takes priority over auto-calculation
 
 
 class WatchProgressResponse(BaseModel):

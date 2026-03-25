@@ -14,15 +14,49 @@ router = APIRouter()
 async def get_episode_sources(episode_id: int, db: AsyncSession = Depends(get_db)):
     query = select(Source).where(Source.episode_id == episode_id)
     result = await db.execute(query)
-    sources = result.scalars().all()
+    sources = list(result.scalars().all())
 
-    # Get website name for context
+    # Get episode + website info
     ep_query = select(Episode).options(
         selectinload(Episode.website_show).selectinload(WebsiteShow.website)
     ).where(Episode.id == episode_id)
     ep_result = await db.execute(ep_query)
     episode = ep_result.scalar_one_or_none()
+    if not episode:
+        raise HTTPException(status_code=404, detail="Episode not found")
+
     website_name = episode.website_show.website.name if episode else None
+
+    # On-demand source extraction: if no sources and episode has a page URL
+    if not sources and episode.external_url:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.info(f"On-demand source extraction for EP{episode.episode_number}: {episode.external_url}")
+        try:
+            from app.scraper.registry import get_scraper
+            scraper = get_scraper(website_name, episode.website_show.website.base_url)
+            import httpx
+            async with httpx.AsyncClient(timeout=30, follow_redirects=True) as client:
+                raw_sources = await scraper.scrape_episode_sources(client, episode.external_url)
+
+            for rs in raw_sources:
+                source = Source(
+                    episode_id=episode_id,
+                    source_name=rs.source_name,
+                    source_key=rs.source_key,
+                    raw_player_data=rs.raw_player_data,
+                    source_type=rs.source_type,
+                )
+                db.add(source)
+            await db.commit()
+
+            # Re-fetch sources
+            result2 = await db.execute(select(Source).where(Source.episode_id == episode_id))
+            sources = list(result2.scalars().all())
+            logger.info(f"Extracted {len(sources)} sources on-demand for EP{episode.episode_number}")
+        except Exception as e:
+            import logging
+            logging.getLogger(__name__).error(f"On-demand source extraction failed: {e}")
 
     return [
         SourceResponse(

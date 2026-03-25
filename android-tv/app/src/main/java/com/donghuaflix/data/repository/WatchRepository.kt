@@ -72,23 +72,50 @@ class WatchRepository @Inject constructor(
 
     suspend fun markAsWatched(showId: Int, episodeNumber: Int) {
         val existing = watchHistoryDao.getProgressForEpisode(showId, episodeNumber)
+        val progress = existing?.durationSeconds ?: 1
+        val duration = existing?.durationSeconds ?: 1
         val entity = WatchHistoryEntity(
             id = existing?.id ?: 0,
             showId = showId,
             episodeNumber = episodeNumber,
-            progressSeconds = existing?.durationSeconds ?: 1,
-            durationSeconds = existing?.durationSeconds ?: 1,
+            progressSeconds = progress,
+            durationSeconds = duration,
             completed = true,
             watchedAt = System.currentTimeMillis(),
             isSynced = false,
         )
         watchHistoryDao.upsert(entity)
+
+        // Push to server immediately
+        try {
+            api.updateProgress(WatchProgressDto(
+                showId = showId,
+                episodeNumber = episodeNumber,
+                progressSeconds = progress,
+                durationSeconds = duration,
+                completed = true,
+            ))
+            watchHistoryDao.upsert(entity.copy(isSynced = true))
+        } catch (_: Exception) {
+            // Will sync later
+        }
     }
 
     suspend fun markAsUnwatched(showId: Int, episodeNumber: Int) {
         val existing = watchHistoryDao.getProgressForEpisode(showId, episodeNumber)
         if (existing != null) {
             watchHistoryDao.upsert(existing.copy(completed = false, progressSeconds = 0, isSynced = false))
+            // Push to server immediately
+            try {
+                api.updateProgress(WatchProgressDto(
+                    showId = showId,
+                    episodeNumber = episodeNumber,
+                    progressSeconds = 0,
+                    durationSeconds = existing.durationSeconds,
+                    completed = false,
+                ))
+                watchHistoryDao.upsert(existing.copy(completed = false, progressSeconds = 0, isSynced = true))
+            } catch (_: Exception) {}
         }
     }
 

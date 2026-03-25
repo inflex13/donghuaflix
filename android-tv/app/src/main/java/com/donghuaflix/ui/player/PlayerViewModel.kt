@@ -147,6 +147,8 @@ class PlayerViewModel @Inject constructor(
                         error = null,
                     )
                 }
+                // Auto-prefetch next episode's sources in background
+                prefetchNextEpisode()
                 return
             }
         }
@@ -208,6 +210,21 @@ class PlayerViewModel @Inject constructor(
         val next = sortedEps.firstOrNull { it.episodeNumber > current }
         if (next != null) {
             playEpisode(next.episodeNumber)
+        }
+    }
+
+    private fun prefetchNextEpisode() {
+        viewModelScope.launch {
+            val current = _uiState.value.episodeNumber
+            val next = _uiState.value.episodes
+                .sortedBy { it.episodeNumber }
+                .firstOrNull { it.episodeNumber > current }
+                ?: return@launch
+
+            try {
+                // Just call getEpisodeSources — triggers on-demand extraction on backend
+                showRepository.getEpisodeSources(next.id)
+            } catch (_: Exception) {}
         }
     }
 

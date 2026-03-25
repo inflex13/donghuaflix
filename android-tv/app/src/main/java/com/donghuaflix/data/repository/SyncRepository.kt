@@ -30,44 +30,7 @@ class SyncRepository @Inject constructor(
     }
 
     suspend fun syncAll(): Result<Unit> = runCatching {
-        val lastSynced = syncMetadataDao.getValue("last_synced_at")
-
-        // First sync: don't pass 'since' so we get everything
-        val response = api.sync(since = if (lastSynced == null) null else lastSynced)
-
-        // Upsert shows
-        if (response.shows.isNotEmpty()) {
-            val entities = response.shows.map { ShowMapper.dtoToEntity(it) }
-            showDao.upsertShows(entities)
-        }
-
-        // Merge watch history (server wins for newer entries)
-        for (wp in response.watchHistory) {
-            val existing = watchHistoryDao.getProgressForEpisode(wp.showId, wp.episodeNumber)
-            if (existing == null || !existing.isSynced) {
-                watchHistoryDao.upsert(
-                    WatchHistoryEntity(
-                        id = existing?.id ?: 0,
-                        showId = wp.showId,
-                        episodeNumber = wp.episodeNumber,
-                        episodeId = wp.episodeId,
-                        progressSeconds = wp.progressSeconds,
-                        durationSeconds = wp.durationSeconds,
-                        completed = wp.completed,
-                        isSynced = true,
-                    )
-                )
-            }
-        }
-
-        // Sync watchlist
-        for (showId in response.watchlist) {
-            if (watchlistDao.isInWatchlist(showId) == null) {
-                watchlistDao.add(WatchlistEntity(showId = showId, isSynced = true))
-            }
-        }
-
-        // Upload un-synced local watch history
+        // 1. PUSH first — upload un-synced local watch history before pulling
         val unsynced = watchHistoryDao.getUnsyncedEntries()
         for (entry in unsynced) {
             try {
@@ -77,6 +40,7 @@ class SyncRepository @Inject constructor(
                         episodeNumber = entry.episodeNumber,
                         progressSeconds = entry.progressSeconds,
                         durationSeconds = entry.durationSeconds,
+                        completed = entry.completed,
                         episodeId = entry.episodeId,
                     )
                 )
@@ -84,6 +48,40 @@ class SyncRepository @Inject constructor(
         }
         if (unsynced.isNotEmpty()) {
             watchHistoryDao.markSynced(unsynced.map { it.id })
+        }
+
+        // 2. PULL — fetch from server (now includes what we just pushed)
+        val lastSynced = syncMetadataDao.getValue("last_synced_at")
+        val response = api.sync(since = if (lastSynced == null) null else lastSynced)
+
+        // Upsert shows
+        if (response.shows.isNotEmpty()) {
+            val entities = response.shows.map { ShowMapper.dtoToEntity(it) }
+            showDao.upsertShows(entities)
+        }
+
+        // Merge watch history (server wins, local unsynced already pushed above)
+        for (wp in response.watchHistory) {
+            val existing = watchHistoryDao.getProgressForEpisode(wp.showId, wp.episodeNumber)
+            watchHistoryDao.upsert(
+                WatchHistoryEntity(
+                    id = existing?.id ?: 0,
+                    showId = wp.showId,
+                    episodeNumber = wp.episodeNumber,
+                    episodeId = wp.episodeId,
+                    progressSeconds = wp.progressSeconds,
+                    durationSeconds = wp.durationSeconds,
+                    completed = wp.completed,
+                    isSynced = true,
+                )
+            )
+        }
+
+        // Sync watchlist
+        for (showId in response.watchlist) {
+            if (watchlistDao.isInWatchlist(showId) == null) {
+                watchlistDao.add(WatchlistEntity(showId = showId, isSynced = true))
+            }
         }
 
         // Update last sync timestamp

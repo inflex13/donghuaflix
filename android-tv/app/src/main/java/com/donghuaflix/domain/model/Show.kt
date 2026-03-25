@@ -30,6 +30,8 @@ data class Episode(
     val title: String? = null,
     val externalUrl: String? = null,
     val websiteName: String? = null,
+    val hasSources: Boolean = true,
+    val createdAt: String? = null,
 )
 
 data class SubtitleTrack(

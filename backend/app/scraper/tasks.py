@@ -147,7 +147,8 @@ def scrape_site(website_name: str, full: bool = False):
                 select(sqlfunc.count()).select_from(Episode).where(Episode.website_show_id == ws.id)
             ).scalar() or 0
 
-            # Scrape if: no episodes, full scrape, or website reports more episodes than we have
+            # Scrape detail for: no episodes, full scrape, or new episodes detected
+            # Sources for older episodes without sources are extracted on-demand when user plays
             site_ep_count = ws.episode_count_on_site or 0
             if db_ep_count == 0 or full or (site_ep_count > 0 and site_ep_count > db_ep_count):
                 logger.info(f"Scraping detail for {ext_id}: db={db_ep_count} site={site_ep_count}")

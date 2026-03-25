@@ -107,9 +107,9 @@ async def get_app_version():
     apk_path = "/srv/DonghuaFlix.apk"
     apk_size = os.path.getsize(apk_path) if os.path.exists(apk_path) else 0
     return {
-        "version_code": 59,
-        "version_name": "2.19.0",
+        "version_code": 63,
+        "version_name": "2.22.0",
         "download_url": "https://dl.donghuaflix.cloud",
         "apk_size": apk_size,
-        "changelog": "Crash logging, keep screen on, subtitle toggle fix, D-pad nav fix",
+        "changelog": "Netflix episode list, preload sources button, auto-prefetch next ep, sort toggle",
     }
