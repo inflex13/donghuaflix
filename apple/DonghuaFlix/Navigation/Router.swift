@@ -90,11 +90,12 @@ final class Router {
         currentPath = NavigationPath()
     }
 
-    // MARK: - Current Path (binds to the active tab)
+    // MARK: - Current Path (binds to the active tab or sidebar selection)
 
-    private var currentPath: NavigationPath {
+    var currentPath: NavigationPath {
         get {
-            switch selectedTab {
+            let tab = sidebarSelection ?? selectedTab
+            switch tab {
             case .home: return homePath
             case .browse: return browsePath
             case .search: return searchPath
@@ -102,7 +103,8 @@ final class Router {
             }
         }
         set {
-            switch selectedTab {
+            let tab = sidebarSelection ?? selectedTab
+            switch tab {
             case .home: homePath = newValue
             case .browse: browsePath = newValue
             case .search: searchPath = newValue
