@@ -98,21 +98,27 @@ final class PlayerViewModel {
                     return true
                 }
                 .sorted { a, b in
-                    let aPriority = a.sourceName.lowercased().contains("dailymotion") ? 3 :
-                                    a.sourceName.lowercased().contains("4k") ? 2 : 0
-                    let bPriority = b.sourceName.lowercased().contains("dailymotion") ? 3 :
-                                    b.sourceName.lowercased().contains("4k") ? 2 : 0
-                    return aPriority > bPriority
+                    func priority(_ name: String) -> Int {
+                        let n = name.lowercased()
+                        if n.contains("dailymotion") { return 4 }
+                        if n.contains("4k") { return 3 }
+                        if n.contains("rumble") { return 2 }
+                        return 0  // ok.ru last — often broken
+                    }
+                    return priority(a.sourceName) > priority(b.sourceName)
                 }
 
-            guard let bestSource = sources.first else {
+            guard !sources.isEmpty else {
                 error = "No sources available"
                 isLoading = false
                 return
             }
 
-            // Resolve and select best source
-            await selectSource(bestSource)
+            // Try each source until one works
+            for source in sources {
+                await selectSource(source)
+                if streamUrl != nil && error == nil { break }
+            }
 
             // Get resume position from watch history
             let history = try await watchRepository.getWatchedEpisodesForShow(showId: showId)

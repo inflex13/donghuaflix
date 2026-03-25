@@ -49,20 +49,53 @@ async def resolve_video_url(source: Source) -> dict | None:
 
 
 async def _resolve_okru(embed_url: str) -> dict | None:
-    """Resolve ok.ru embed to direct video URL."""
+    """Resolve ok.ru embed to direct video URL via Playwright."""
     try:
-        import httpx
-        async with httpx.AsyncClient(timeout=15, follow_redirects=True) as client:
-            resp = await client.get(embed_url, headers={"User-Agent": "Mozilla/5.0"})
-            if resp.status_code == 200:
-                match = re.search(r'hlsManifestUrl["\s:]+(["\'])(.+?)\1', resp.text)
-                if match:
-                    hls_url = match.group(2).replace("\\u0026", "&").replace("\\/", "/")
-                    logger.info(f"Resolved ok.ru → HLS")
-                    return {"url": hls_url, "type": "hls"}
-                match = re.search(r'data-options="[^"]*hlsMasterPlaylistUrl[^"]*?([hH]ttps?://[^"&]+\.m3u8[^"&]*)', resp.text)
-                if match:
-                    return {"url": match.group(1).replace("&amp;", "&"), "type": "hls"}
+        from playwright.async_api import async_playwright
+
+        async with async_playwright() as p:
+            browser = await p.chromium.launch(headless=True, args=["--no-sandbox"])
+            page = await browser.new_page()
+
+            video_url = None
+            video_type = None
+
+            async def handle_response(response):
+                nonlocal video_url, video_type
+                url = response.url
+                if ".m3u8" in url:
+                    video_url = url
+                    video_type = "hls"
+                elif ".mp4" in url and "video" in url and not video_url:
+                    video_url = url
+                    video_type = "mp4"
+
+            page.on("response", handle_response)
+
+            await page.goto(embed_url, wait_until="domcontentloaded", timeout=30000)
+            await page.wait_for_timeout(5000)
+
+            # Try clicking play if video hasn't started
+            if not video_url:
+                try:
+                    play_btn = await page.query_selector(".video-player, .vp-layer-curtain, [data-module=OKVideo]")
+                    if play_btn:
+                        await play_btn.click()
+                        await page.wait_for_timeout(5000)
+                except Exception:
+                    pass
+
+            await browser.close()
+
+            if video_url:
+                logger.info(f"Resolved ok.ru → {video_type}: {video_url[:80]}...")
+                return {
+                    "url": video_url,
+                    "type": video_type,
+                    "expires_at": datetime.utcnow() + timedelta(hours=2),
+                }
+            else:
+                logger.warning(f"No video URL found for ok.ru: {embed_url}")
     except Exception as e:
         logger.error(f"ok.ru resolve failed: {e}")
     return None

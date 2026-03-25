@@ -39,15 +39,16 @@ async def get_episode_sources(episode_id: int, db: AsyncSession = Depends(get_db
             async with httpx.AsyncClient(timeout=30, follow_redirects=True) as client:
                 raw_sources = await scraper.scrape_episode_sources(client, episode.external_url)
 
+            from sqlalchemy.dialects.postgresql import insert as pg_insert
             for rs in raw_sources:
-                source = Source(
+                stmt = pg_insert(Source).values(
                     episode_id=episode_id,
                     source_name=rs.source_name,
                     source_key=rs.source_key,
                     raw_player_data=rs.raw_player_data,
                     source_type=rs.source_type,
-                )
-                db.add(source)
+                ).on_conflict_do_nothing(index_elements=["episode_id", "source_key"])
+                await db.execute(stmt)
             await db.commit()
 
             # Re-fetch sources
