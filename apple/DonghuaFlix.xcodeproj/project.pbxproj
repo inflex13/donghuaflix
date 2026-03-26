@@ -17,6 +17,7 @@
 		2B0546F9BFBA43D130060B79 /* DonghuaFlixTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC604E6F7ACA4E7743B555A /* DonghuaFlixTheme.swift */; };
 		2D995EC14225F9D481FA823D /* ShowCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30200722F18345067BC5E1F7 /* ShowCardView.swift */; };
 		316D440E02A4B5D2B0EC0679 /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C78E61A2B199A9EBAD131972 /* PlayerView.swift */; };
+		35DBD49C11F62BEF407A99BB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6CA2F9FE1533C9F562DEB007 /* Assets.xcassets */; };
 		398C87D8B88FFD9BE7E1198A /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714544123DC2F39931328A16 /* Router.swift */; };
 		3C80D42E929A3D1B4E060875 /* DonghuaFlixApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BC6644AD0855FBBC831E701 /* DonghuaFlixApp.swift */; };
 		3DB977DBFEEDBFA49EBE9C2C /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75CBAF742105385EBC1CE8AB /* HomeView.swift */; };
@@ -31,6 +32,7 @@
 		7113A7ED026F20C37CBF5FBD /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027B33ECF29362C36F41D7CD /* HomeViewModel.swift */; };
 		801CD0EC56495FB6C6BF4C17 /* BrowseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF2B8EBBE4185D3F88077737 /* BrowseViewModel.swift */; };
 		82D37808158B8096A14DF7B8 /* WatchRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69075DCCCD3DD10B7594EE5B /* WatchRepository.swift */; };
+		8D0ACFF5E996A137043BF6FF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6CA2F9FE1533C9F562DEB007 /* Assets.xcassets */; };
 		8F101079183873450F08E93F /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A9B3B1648BEEACB4DDF4BEC /* DetailView.swift */; };
 		90E336F04721452A6BF3C184 /* BrowseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28653D14185D6CC5CBA77B9 /* BrowseView.swift */; };
 		9490156A696DA7A9A86DA7E3 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75CBAF742105385EBC1CE8AB /* HomeView.swift */; };
@@ -75,6 +77,7 @@
 		602C8F7C6A5F30DBC50997D6 /* DonghuaFlix-macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonghuaFlix-macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		69075DCCCD3DD10B7594EE5B /* WatchRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchRepository.swift; sourceTree = "<group>"; };
 		6BC6644AD0855FBBC831E701 /* DonghuaFlixApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DonghuaFlixApp.swift; sourceTree = "<group>"; };
+		6CA2F9FE1533C9F562DEB007 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		714544123DC2F39931328A16 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		75CBAF742105385EBC1CE8AB /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		947975FF9C6AB7FAC7EB744F /* WatchlistViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistViewModel.swift; sourceTree = "<group>"; };
@@ -205,6 +208,7 @@
 				A04D3920F40D658D849D0D20 /* Core */,
 				FAA0A050CEC6EA0C013EF8C0 /* Features */,
 				372BC4C1C7FC7900F5ED3097 /* Navigation */,
+				6CA2F9FE1533C9F562DEB007 /* Assets.xcassets */,
 				6BC6644AD0855FBBC831E701 /* DonghuaFlixApp.swift */,
 			);
 			path = DonghuaFlix;
@@ -267,6 +271,7 @@
 			buildConfigurationList = B58D3C8FA3657BAD8E4243F8 /* Build configuration list for PBXNativeTarget "DonghuaFlix-iOS" */;
 			buildPhases = (
 				C83781C6674ED0A62932381A /* Sources */,
+				BDB075B3A9FE7FFA8336A457 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -284,6 +289,7 @@
 			buildConfigurationList = 2DDFA7FDF601E1432D04A1CA /* Build configuration list for PBXNativeTarget "DonghuaFlix-macOS" */;
 			buildPhases = (
 				EE55B2ED07A7C5E368378CDB /* Sources */,
+				2BBD713F9D5EC8DC92722D43 /* Resources */,
 				781B3E10E854ACE81124627E /* Copy to /Applications */,
 			);
 			buildRules = (
@@ -333,6 +339,25 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		2BBD713F9D5EC8DC92722D43 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				35DBD49C11F62BEF407A99BB /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BDB075B3A9FE7FFA8336A457 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D0ACFF5E996A137043BF6FF /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
 		781B3E10E854ACE81124627E /* Copy to /Applications */ = {
