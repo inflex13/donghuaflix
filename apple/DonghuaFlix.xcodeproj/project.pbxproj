@@ -7,17 +7,38 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		006B21407F4C03230AA6BDA8 /* WatchlistViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947975FF9C6AB7FAC7EB744F /* WatchlistViewModel.swift */; };
+		07BFD62A27EAB88C3F1A94A7 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991305D41D91848EE4F9A87F /* SearchView.swift */; };
 		0A053E98D39B1676429DFD44 /* DTOs.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE9ABD0DB708E9659170249D /* DTOs.swift */; };
 		11A88B491AFFEAF2255FCA3D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5963281E3EB0863D4F98A4B1 /* ContentView.swift */; };
+		1C73BB24045D75A92966721F /* BrowseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF2B8EBBE4185D3F88077737 /* BrowseViewModel.swift */; };
+		26AF418BABD845EB5E2B6920 /* DetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE48595F6C089D8988BAFFA3 /* DetailViewModel.swift */; };
+		284F2BA6CA43D145AE4F4765 /* WatchlistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C885A2615519895D89D64A23 /* WatchlistView.swift */; };
 		2B0546F9BFBA43D130060B79 /* DonghuaFlixTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC604E6F7ACA4E7743B555A /* DonghuaFlixTheme.swift */; };
+		2D995EC14225F9D481FA823D /* ShowCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30200722F18345067BC5E1F7 /* ShowCardView.swift */; };
+		316D440E02A4B5D2B0EC0679 /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C78E61A2B199A9EBAD131972 /* PlayerView.swift */; };
 		398C87D8B88FFD9BE7E1198A /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714544123DC2F39931328A16 /* Router.swift */; };
 		3C80D42E929A3D1B4E060875 /* DonghuaFlixApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BC6644AD0855FBBC831E701 /* DonghuaFlixApp.swift */; };
+		3DB977DBFEEDBFA49EBE9C2C /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75CBAF742105385EBC1CE8AB /* HomeView.swift */; };
 		3E4B87B86BA5C98DB65BD205 /* SubtitleParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C042C86150ED9594A78E20D /* SubtitleParser.swift */; };
+		3E86B50852EEE33AC27508DD /* PlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CDCF8E531A2763DEAB10D20 /* PlayerViewModel.swift */; };
+		43107AE8359B2E95AF061DCF /* DetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE48595F6C089D8988BAFFA3 /* DetailViewModel.swift */; };
 		4A57D1811FEB9A6206962421 /* DTOs.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE9ABD0DB708E9659170249D /* DTOs.swift */; };
+		575E329531BEB48DC13E12B8 /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C78E61A2B199A9EBAD131972 /* PlayerView.swift */; };
+		5DCB36C84400F9B3195DE400 /* PlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CDCF8E531A2763DEAB10D20 /* PlayerViewModel.swift */; };
 		666EEED349856E18CC998C6B /* DonghuaFlixApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BC6644AD0855FBBC831E701 /* DonghuaFlixApp.swift */; };
+		6CB92DFC36D3AFE8EEFB4F97 /* BrowseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28653D14185D6CC5CBA77B9 /* BrowseView.swift */; };
+		7113A7ED026F20C37CBF5FBD /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027B33ECF29362C36F41D7CD /* HomeViewModel.swift */; };
+		801CD0EC56495FB6C6BF4C17 /* BrowseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF2B8EBBE4185D3F88077737 /* BrowseViewModel.swift */; };
 		82D37808158B8096A14DF7B8 /* WatchRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69075DCCCD3DD10B7594EE5B /* WatchRepository.swift */; };
+		8F101079183873450F08E93F /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A9B3B1648BEEACB4DDF4BEC /* DetailView.swift */; };
+		90E336F04721452A6BF3C184 /* BrowseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28653D14185D6CC5CBA77B9 /* BrowseView.swift */; };
+		9490156A696DA7A9A86DA7E3 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75CBAF742105385EBC1CE8AB /* HomeView.swift */; };
 		98EE9AEC5DC11AA46840C3B0 /* APIEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503FE4003D2F78032932F5C7 /* APIEndpoint.swift */; };
 		9C039822D7CC64621B03C4CB /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13A6E2E26EC6579C156E3B34 /* APIClient.swift */; };
+		9C0B0EEDEDF9AFB4F07C884C /* WatchlistViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947975FF9C6AB7FAC7EB744F /* WatchlistViewModel.swift */; };
+		9C1B5552230E96CAF7D6C2EF /* WatchlistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C885A2615519895D89D64A23 /* WatchlistView.swift */; };
+		9C562312DC4CA4E8D1DECDD8 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BBF8A0B48D1730320ABF6E7 /* SearchViewModel.swift */; };
 		A5BA4A344AF3C7B4424C8ED0 /* ShowRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D222170AF6AB7DA37CC166 /* ShowRepository.swift */; };
 		AC1465E818CB41823DAB1F3D /* CrashLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B49F7CB85A97291DFE40684 /* CrashLogger.swift */; };
 		AF5828690E64D62AE00AB142 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 575069DB924696E5B1FFE7FB /* Models.swift */; };
@@ -28,65 +49,44 @@
 		D1DED0B380F57392F35D0A6E /* WatchRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69075DCCCD3DD10B7594EE5B /* WatchRepository.swift */; };
 		D2F83E74E71731364A0FBA68 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 575069DB924696E5B1FFE7FB /* Models.swift */; };
 		E4BC1713DA9885F54C730D5C /* APIEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503FE4003D2F78032932F5C7 /* APIEndpoint.swift */; };
+		E4F04DCD591A2DB4FF2569E2 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BBF8A0B48D1730320ABF6E7 /* SearchViewModel.swift */; };
+		E7B2A38C2BD229EF4ECB9169 /* ShowCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30200722F18345067BC5E1F7 /* ShowCardView.swift */; };
 		ED9CD6DAAC3585706057166B /* CrashLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B49F7CB85A97291DFE40684 /* CrashLogger.swift */; };
 		EDE186492CF590A2DB24B671 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714544123DC2F39931328A16 /* Router.swift */; };
 		F3D3C12F63B489400202CC88 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5963281E3EB0863D4F98A4B1 /* ContentView.swift */; };
-		AA0001011000000100000001 /* ShowCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0001010000000100000001 /* ShowCardView.swift */; };
-		AA0001021000000200000002 /* ShowCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0001010000000100000001 /* ShowCardView.swift */; };
-		AA0002011000000100000003 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0002010000000100000003 /* HomeViewModel.swift */; };
-		AA0002021000000200000004 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0002010000000100000003 /* HomeViewModel.swift */; };
-		AA0003011000000100000005 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0003010000000100000005 /* HomeView.swift */; };
-		AA0003021000000200000006 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0003010000000100000005 /* HomeView.swift */; };
-		AA0004011000000100000007 /* DetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0004010000000100000007 /* DetailViewModel.swift */; };
-		AA0004021000000200000008 /* DetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0004010000000100000007 /* DetailViewModel.swift */; };
-		AA0005011000000100000009 /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0005010000000100000009 /* DetailView.swift */; };
-		AA0005021000000200000010 /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0005010000000100000009 /* DetailView.swift */; };
-		AA0006011000000100000011 /* PlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0006010000000100000011 /* PlayerViewModel.swift */; };
-		AA0006021000000200000012 /* PlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0006010000000100000011 /* PlayerViewModel.swift */; };
-		AA0007011000000100000013 /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0007010000000100000013 /* PlayerView.swift */; };
-		AA0007021000000200000014 /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0007010000000100000013 /* PlayerView.swift */; };
-		AA0008011000000100000015 /* BrowseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0008010000000100000015 /* BrowseViewModel.swift */; };
-		AA0008021000000200000016 /* BrowseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0008010000000100000015 /* BrowseViewModel.swift */; };
-		AA0009011000000100000017 /* BrowseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0009010000000100000017 /* BrowseView.swift */; };
-		AA0009021000000200000018 /* BrowseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0009010000000100000017 /* BrowseView.swift */; };
-		AA0010011000000100000019 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0010010000000100000019 /* SearchViewModel.swift */; };
-		AA0010021000000200000020 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0010010000000100000019 /* SearchViewModel.swift */; };
-		AA0011011000000100000021 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0011010000000100000021 /* SearchView.swift */; };
-		AA0011021000000200000022 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0011010000000100000021 /* SearchView.swift */; };
-		AA0012011000000100000023 /* WatchlistViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0012010000000100000023 /* WatchlistViewModel.swift */; };
-		AA0012021000000200000024 /* WatchlistViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0012010000000100000023 /* WatchlistViewModel.swift */; };
-		AA0013011000000100000025 /* WatchlistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0013010000000100000025 /* WatchlistView.swift */; };
-		AA0013021000000200000026 /* WatchlistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0013010000000100000025 /* WatchlistView.swift */; };
+		F6082AD550F8AE64D763111B /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027B33ECF29362C36F41D7CD /* HomeViewModel.swift */; };
+		FAE0A0DE95BB32AF656E4231 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991305D41D91848EE4F9A87F /* SearchView.swift */; };
+		FCF07B64B9290D713BCEA6E3 /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A9B3B1648BEEACB4DDF4BEC /* DetailView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		027B33ECF29362C36F41D7CD /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		0B49F7CB85A97291DFE40684 /* CrashLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashLogger.swift; sourceTree = "<group>"; };
 		13A6E2E26EC6579C156E3B34 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
+		2CDCF8E531A2763DEAB10D20 /* PlayerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewModel.swift; sourceTree = "<group>"; };
 		2EC604E6F7ACA4E7743B555A /* DonghuaFlixTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DonghuaFlixTheme.swift; sourceTree = "<group>"; };
+		30200722F18345067BC5E1F7 /* ShowCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowCardView.swift; sourceTree = "<group>"; };
+		4A9B3B1648BEEACB4DDF4BEC /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
 		503FE4003D2F78032932F5C7 /* APIEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIEndpoint.swift; sourceTree = "<group>"; };
 		575069DB924696E5B1FFE7FB /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		57D222170AF6AB7DA37CC166 /* ShowRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowRepository.swift; sourceTree = "<group>"; };
 		5963281E3EB0863D4F98A4B1 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		5BBF8A0B48D1730320ABF6E7 /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
 		602C8F7C6A5F30DBC50997D6 /* DonghuaFlix-macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonghuaFlix-macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		69075DCCCD3DD10B7594EE5B /* WatchRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchRepository.swift; sourceTree = "<group>"; };
 		6BC6644AD0855FBBC831E701 /* DonghuaFlixApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DonghuaFlixApp.swift; sourceTree = "<group>"; };
 		714544123DC2F39931328A16 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
+		75CBAF742105385EBC1CE8AB /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		947975FF9C6AB7FAC7EB744F /* WatchlistViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistViewModel.swift; sourceTree = "<group>"; };
+		991305D41D91848EE4F9A87F /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		9C042C86150ED9594A78E20D /* SubtitleParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitleParser.swift; sourceTree = "<group>"; };
+		A28653D14185D6CC5CBA77B9 /* BrowseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowseView.swift; sourceTree = "<group>"; };
 		AE9ABD0DB708E9659170249D /* DTOs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DTOs.swift; sourceTree = "<group>"; };
+		C78E61A2B199A9EBAD131972 /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
+		C885A2615519895D89D64A23 /* WatchlistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistView.swift; sourceTree = "<group>"; };
+		EE48595F6C089D8988BAFFA3 /* DetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewModel.swift; sourceTree = "<group>"; };
+		EF2B8EBBE4185D3F88077737 /* BrowseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowseViewModel.swift; sourceTree = "<group>"; };
 		FDCFF57FA1A3C2084694218C /* DonghuaFlix-iOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = "DonghuaFlix-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		AA0001010000000100000001 /* ShowCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowCardView.swift; sourceTree = "<group>"; };
-		AA0002010000000100000003 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
-		AA0003010000000100000005 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
-		AA0004010000000100000007 /* DetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewModel.swift; sourceTree = "<group>"; };
-		AA0005010000000100000009 /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
-		AA0006010000000100000011 /* PlayerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewModel.swift; sourceTree = "<group>"; };
-		AA0007010000000100000013 /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
-		AA0008010000000100000015 /* BrowseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowseViewModel.swift; sourceTree = "<group>"; };
-		AA0009010000000100000017 /* BrowseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowseView.swift; sourceTree = "<group>"; };
-		AA0010010000000100000019 /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
-		AA0011010000000100000021 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
-		AA0012010000000100000023 /* WatchlistViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistViewModel.swift; sourceTree = "<group>"; };
-		AA0013010000000100000025 /* WatchlistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -96,6 +96,24 @@
 				2EC604E6F7ACA4E7743B555A /* DonghuaFlixTheme.swift */,
 			);
 			path = Theme;
+			sourceTree = "<group>";
+		};
+		0E5CCA78622DB813D4618B4D /* Watchlist */ = {
+			isa = PBXGroup;
+			children = (
+				C885A2615519895D89D64A23 /* WatchlistView.swift */,
+				947975FF9C6AB7FAC7EB744F /* WatchlistViewModel.swift */,
+			);
+			path = Watchlist;
+			sourceTree = "<group>";
+		};
+		0EDA70EF5F9BDD5BA1F46E55 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				75CBAF742105385EBC1CE8AB /* HomeView.swift */,
+				027B33ECF29362C36F41D7CD /* HomeViewModel.swift */,
+			);
+			path = Home;
 			sourceTree = "<group>";
 		};
 		19A5A83DD43B46CB9BED138E /* Services */ = {
@@ -124,12 +142,30 @@
 			);
 			sourceTree = "<group>";
 		};
+		3EAE45E2F17628FCAE9054E2 /* Player */ = {
+			isa = PBXGroup;
+			children = (
+				C78E61A2B199A9EBAD131972 /* PlayerView.swift */,
+				2CDCF8E531A2763DEAB10D20 /* PlayerViewModel.swift */,
+			);
+			path = Player;
+			sourceTree = "<group>";
+		};
 		6638412DCCB0CA97EA7D5B55 /* Models */ = {
 			isa = PBXGroup;
 			children = (
 				575069DB924696E5B1FFE7FB /* Models.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		865660E711312EA6E4CC8ADA /* Detail */ = {
+			isa = PBXGroup;
+			children = (
+				4A9B3B1648BEEACB4DDF4BEC /* DetailView.swift */,
+				EE48595F6C089D8988BAFFA3 /* DetailViewModel.swift */,
+			);
+			path = Detail;
 			sourceTree = "<group>";
 		};
 		A04D3920F40D658D849D0D20 /* Core */ = {
@@ -174,6 +210,32 @@
 			path = DonghuaFlix;
 			sourceTree = "<group>";
 		};
+		CA755295005204CC62F31FDD /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				30200722F18345067BC5E1F7 /* ShowCardView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		CEF5587AFC05DBC72CFD03A3 /* Browse */ = {
+			isa = PBXGroup;
+			children = (
+				A28653D14185D6CC5CBA77B9 /* BrowseView.swift */,
+				EF2B8EBBE4185D3F88077737 /* BrowseViewModel.swift */,
+			);
+			path = Browse;
+			sourceTree = "<group>";
+		};
+		D9ED3D8A13ADBB7425EE1CF1 /* Search */ = {
+			isa = PBXGroup;
+			children = (
+				991305D41D91848EE4F9A87F /* SearchView.swift */,
+				5BBF8A0B48D1730320ABF6E7 /* SearchViewModel.swift */,
+			);
+			path = Search;
+			sourceTree = "<group>";
+		};
 		E3F49E952293B5180523AB15 /* Repositories */ = {
 			isa = PBXGroup;
 			children = (
@@ -186,77 +248,15 @@
 		FAA0A050CEC6EA0C013EF8C0 /* Features */ = {
 			isa = PBXGroup;
 			children = (
-				AA00F0010000000100000001 /* Components */,
-				AA00F0020000000200000002 /* Home */,
-				AA00F0030000000300000003 /* Detail */,
-				AA00F0040000000400000004 /* Player */,
-				AA00F0050000000500000005 /* Browse */,
-				AA00F0060000000600000006 /* Search */,
-				AA00F0070000000700000007 /* Watchlist */,
+				CEF5587AFC05DBC72CFD03A3 /* Browse */,
+				CA755295005204CC62F31FDD /* Components */,
+				865660E711312EA6E4CC8ADA /* Detail */,
+				0EDA70EF5F9BDD5BA1F46E55 /* Home */,
+				3EAE45E2F17628FCAE9054E2 /* Player */,
+				D9ED3D8A13ADBB7425EE1CF1 /* Search */,
+				0E5CCA78622DB813D4618B4D /* Watchlist */,
 			);
 			path = Features;
-			sourceTree = "<group>";
-		};
-		AA00F0010000000100000001 /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				AA0001010000000100000001 /* ShowCardView.swift */,
-			);
-			path = Components;
-			sourceTree = "<group>";
-		};
-		AA00F0020000000200000002 /* Home */ = {
-			isa = PBXGroup;
-			children = (
-				AA0002010000000100000003 /* HomeViewModel.swift */,
-				AA0003010000000100000005 /* HomeView.swift */,
-			);
-			path = Home;
-			sourceTree = "<group>";
-		};
-		AA00F0030000000300000003 /* Detail */ = {
-			isa = PBXGroup;
-			children = (
-				AA0004010000000100000007 /* DetailViewModel.swift */,
-				AA0005010000000100000009 /* DetailView.swift */,
-			);
-			path = Detail;
-			sourceTree = "<group>";
-		};
-		AA00F0040000000400000004 /* Player */ = {
-			isa = PBXGroup;
-			children = (
-				AA0006010000000100000011 /* PlayerViewModel.swift */,
-				AA0007010000000100000013 /* PlayerView.swift */,
-			);
-			path = Player;
-			sourceTree = "<group>";
-		};
-		AA00F0050000000500000005 /* Browse */ = {
-			isa = PBXGroup;
-			children = (
-				AA0008010000000100000015 /* BrowseViewModel.swift */,
-				AA0009010000000100000017 /* BrowseView.swift */,
-			);
-			path = Browse;
-			sourceTree = "<group>";
-		};
-		AA00F0060000000600000006 /* Search */ = {
-			isa = PBXGroup;
-			children = (
-				AA0010010000000100000019 /* SearchViewModel.swift */,
-				AA0011010000000100000021 /* SearchView.swift */,
-			);
-			path = Search;
-			sourceTree = "<group>";
-		};
-		AA00F0070000000700000007 /* Watchlist */ = {
-			isa = PBXGroup;
-			children = (
-				AA0012010000000100000023 /* WatchlistViewModel.swift */,
-				AA0013010000000100000025 /* WatchlistView.swift */,
-			);
-			path = Watchlist;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -284,6 +284,7 @@
 			buildConfigurationList = 2DDFA7FDF601E1432D04A1CA /* Build configuration list for PBXNativeTarget "DonghuaFlix-macOS" */;
 			buildPhases = (
 				EE55B2ED07A7C5E368378CDB /* Sources */,
+				781B3E10E854ACE81124627E /* Copy to /Applications */,
 			);
 			buildRules = (
 			);
@@ -333,6 +334,27 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		781B3E10E854ACE81124627E /* Copy to /Applications */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Copy to /Applications";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp -R \"${BUILT_PRODUCTS_DIR}/DonghuaFlix.app\" \"/Applications/DonghuaFlix.app\" 2>/dev/null || true\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		C83781C6674ED0A62932381A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -340,29 +362,29 @@
 			files = (
 				BBA9BE813F505A460871F7B2 /* APIClient.swift in Sources */,
 				98EE9AEC5DC11AA46840C3B0 /* APIEndpoint.swift in Sources */,
+				6CB92DFC36D3AFE8EEFB4F97 /* BrowseView.swift in Sources */,
+				801CD0EC56495FB6C6BF4C17 /* BrowseViewModel.swift in Sources */,
 				F3D3C12F63B489400202CC88 /* ContentView.swift in Sources */,
 				ED9CD6DAAC3585706057166B /* CrashLogger.swift in Sources */,
 				0A053E98D39B1676429DFD44 /* DTOs.swift in Sources */,
+				FCF07B64B9290D713BCEA6E3 /* DetailView.swift in Sources */,
+				26AF418BABD845EB5E2B6920 /* DetailViewModel.swift in Sources */,
 				3C80D42E929A3D1B4E060875 /* DonghuaFlixApp.swift in Sources */,
 				2B0546F9BFBA43D130060B79 /* DonghuaFlixTheme.swift in Sources */,
+				3DB977DBFEEDBFA49EBE9C2C /* HomeView.swift in Sources */,
+				7113A7ED026F20C37CBF5FBD /* HomeViewModel.swift in Sources */,
 				D2F83E74E71731364A0FBA68 /* Models.swift in Sources */,
+				316D440E02A4B5D2B0EC0679 /* PlayerView.swift in Sources */,
+				5DCB36C84400F9B3195DE400 /* PlayerViewModel.swift in Sources */,
 				EDE186492CF590A2DB24B671 /* Router.swift in Sources */,
+				07BFD62A27EAB88C3F1A94A7 /* SearchView.swift in Sources */,
+				E4F04DCD591A2DB4FF2569E2 /* SearchViewModel.swift in Sources */,
+				2D995EC14225F9D481FA823D /* ShowCardView.swift in Sources */,
 				A5BA4A344AF3C7B4424C8ED0 /* ShowRepository.swift in Sources */,
 				3E4B87B86BA5C98DB65BD205 /* SubtitleParser.swift in Sources */,
 				D1DED0B380F57392F35D0A6E /* WatchRepository.swift in Sources */,
-				AA0001011000000100000001 /* ShowCardView.swift in Sources */,
-				AA0002011000000100000003 /* HomeViewModel.swift in Sources */,
-				AA0003011000000100000005 /* HomeView.swift in Sources */,
-				AA0004011000000100000007 /* DetailViewModel.swift in Sources */,
-				AA0005011000000100000009 /* DetailView.swift in Sources */,
-				AA0006011000000100000011 /* PlayerViewModel.swift in Sources */,
-				AA0007011000000100000013 /* PlayerView.swift in Sources */,
-				AA0008011000000100000015 /* BrowseViewModel.swift in Sources */,
-				AA0009011000000100000017 /* BrowseView.swift in Sources */,
-				AA0010011000000100000019 /* SearchViewModel.swift in Sources */,
-				AA0011011000000100000021 /* SearchView.swift in Sources */,
-				AA0012011000000100000023 /* WatchlistViewModel.swift in Sources */,
-				AA0013011000000100000025 /* WatchlistView.swift in Sources */,
+				9C1B5552230E96CAF7D6C2EF /* WatchlistView.swift in Sources */,
+				006B21407F4C03230AA6BDA8 /* WatchlistViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -372,29 +394,29 @@
 			files = (
 				9C039822D7CC64621B03C4CB /* APIClient.swift in Sources */,
 				E4BC1713DA9885F54C730D5C /* APIEndpoint.swift in Sources */,
+				90E336F04721452A6BF3C184 /* BrowseView.swift in Sources */,
+				1C73BB24045D75A92966721F /* BrowseViewModel.swift in Sources */,
 				11A88B491AFFEAF2255FCA3D /* ContentView.swift in Sources */,
 				AC1465E818CB41823DAB1F3D /* CrashLogger.swift in Sources */,
 				4A57D1811FEB9A6206962421 /* DTOs.swift in Sources */,
+				8F101079183873450F08E93F /* DetailView.swift in Sources */,
+				43107AE8359B2E95AF061DCF /* DetailViewModel.swift in Sources */,
 				666EEED349856E18CC998C6B /* DonghuaFlixApp.swift in Sources */,
 				BA4582B0D4366276F1FB4E07 /* DonghuaFlixTheme.swift in Sources */,
+				9490156A696DA7A9A86DA7E3 /* HomeView.swift in Sources */,
+				F6082AD550F8AE64D763111B /* HomeViewModel.swift in Sources */,
 				AF5828690E64D62AE00AB142 /* Models.swift in Sources */,
+				575E329531BEB48DC13E12B8 /* PlayerView.swift in Sources */,
+				3E86B50852EEE33AC27508DD /* PlayerViewModel.swift in Sources */,
 				398C87D8B88FFD9BE7E1198A /* Router.swift in Sources */,
+				FAE0A0DE95BB32AF656E4231 /* SearchView.swift in Sources */,
+				9C562312DC4CA4E8D1DECDD8 /* SearchViewModel.swift in Sources */,
+				E7B2A38C2BD229EF4ECB9169 /* ShowCardView.swift in Sources */,
 				BBB442A217629C0841E1E7D4 /* ShowRepository.swift in Sources */,
 				B5B1F823B1B08580FFC7CAB1 /* SubtitleParser.swift in Sources */,
 				82D37808158B8096A14DF7B8 /* WatchRepository.swift in Sources */,
-				AA0001021000000200000002 /* ShowCardView.swift in Sources */,
-				AA0002021000000200000004 /* HomeViewModel.swift in Sources */,
-				AA0003021000000200000006 /* HomeView.swift in Sources */,
-				AA0004021000000200000008 /* DetailViewModel.swift in Sources */,
-				AA0005021000000200000010 /* DetailView.swift in Sources */,
-				AA0006021000000200000012 /* PlayerViewModel.swift in Sources */,
-				AA0007021000000200000014 /* PlayerView.swift in Sources */,
-				AA0008021000000200000016 /* BrowseViewModel.swift in Sources */,
-				AA0009021000000200000018 /* BrowseView.swift in Sources */,
-				AA0010021000000200000020 /* SearchViewModel.swift in Sources */,
-				AA0011021000000200000022 /* SearchView.swift in Sources */,
-				AA0012021000000200000024 /* WatchlistViewModel.swift in Sources */,
-				AA0013021000000200000026 /* WatchlistView.swift in Sources */,
+				284F2BA6CA43D145AE4F4765 /* WatchlistView.swift in Sources */,
+				9C0B0EEDEDF9AFB4F07C884C /* WatchlistViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

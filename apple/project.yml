@@ -49,6 +49,10 @@ targets:
         GENERATE_INFOPLIST_FILE: true
         MARKETING_VERSION: "1.0.0"
         CURRENT_PROJECT_VERSION: 1
+    postBuildScripts:
+      - script: |
+          cp -R "${BUILT_PRODUCTS_DIR}/DonghuaFlix.app" "/Applications/DonghuaFlix.app" 2>/dev/null || true
+        name: "Copy to /Applications"
 
 schemes:
   DonghuaFlix-iOS:
