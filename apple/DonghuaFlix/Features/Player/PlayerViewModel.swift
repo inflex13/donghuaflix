@@ -160,8 +160,11 @@ final class PlayerViewModel {
             subtitles = source.subtitles
         }
 
-        // Load subtitles if available
-        if let firstSub = subtitles.first, let url = URL(string: firstSub.url) {
+        // Load subtitles — prefer English
+        let preferredSub = subtitles.first(where: { $0.language == "en" })
+            ?? subtitles.first(where: { $0.language.hasPrefix("en") })
+            ?? subtitles.first
+        if let sub = preferredSub, let url = URL(string: sub.url) {
             try? await subtitleParser.load(from: url)
         }
     }
