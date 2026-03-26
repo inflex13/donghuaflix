@@ -338,6 +338,12 @@ struct PlayerView: View {
                     .buttonStyle(.plain)
                 }
 
+                // AirPlay button
+                #if os(iOS)
+                AirPlayButton()
+                    .frame(width: 28, height: 28)
+                #endif
+
                 // Fullscreen toggle
                 #if os(macOS)
                 Button {
@@ -452,6 +458,10 @@ struct PlayerView: View {
             player?.seek(to: time)
         }
 
+        player?.allowsExternalPlayback = true
+        #if os(iOS)
+        player?.usesExternalPlaybackWhileExternalScreenIsActive = true
+        #endif
         player?.play()
         isPlaying = true
         vm.showControlsTemporarily()
@@ -665,5 +675,23 @@ struct VideoPlayerView: NSViewRepresentable {
             playerLayer.player = player
         }
     }
+}
+#endif
+
+// MARK: - AirPlay Button
+
+#if os(iOS)
+import AVRouting
+
+struct AirPlayButton: UIViewRepresentable {
+    func makeUIView(context: Context) -> AVRoutePickerView {
+        let picker = AVRoutePickerView()
+        picker.tintColor = .white
+        picker.activeTintColor = UIColor(DonghuaFlixTheme.accentFuchsia)
+        picker.prioritizesVideoDevices = true
+        return picker
+    }
+
+    func updateUIView(_ uiView: AVRoutePickerView, context: Context) {}
 }
 #endif
